@@ -68,6 +68,30 @@ struct studentItem {
     double grade;
 };
 
+void showALl() {
+
+}
+
+void insertStudent() {
+
+}
+
+void queryID() {
+
+}
+
+void updateStudent() {
+
+}
+
+void deleteStudent() {
+
+}
+
+void saveDB() {
+
+}
+
 int main() {
     char userInputRaw[MAX_UINPUT_LENGTH];
 
