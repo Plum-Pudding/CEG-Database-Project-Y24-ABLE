@@ -8,13 +8,3 @@
 2301234,Khamarullah,Software Engineering,95.5
 2502569,Muhd Qayyum,Sustainable Built Environment,93.9
 2201234,Donovan Khoo,Computer Science,89.3
-2304238,Rayner Tan,Digital Supply Chain,89.1
-2203465,Jereme Tan,Cybersecurity,79.4
-2601230,Eelias,Psychology,43.8
-2604219,Aryan Ramachandran,Law in Business,90.1
-2303191,Akil,Digital Forensics,91.1
-2405192,Masagus Irfan,Mechanical Engineering,92.1
-2201436,Wei Kang,Computer Science,93.1
-2401029,Joel Benjamin,Computer Engineering,88.1
-2201188,Febryon Christian,Business and Management,93.2
-2201231,Rahul Khan,Accountacy,88.1
