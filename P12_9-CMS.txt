@@ -15,3 +15,6 @@
 2303191,Akil,Digital Forensics,91.1
 2405192,Masagus Irfan,Mechanical Engineering,92.1
 2201436,Wei Kang,Computer Science,93.1
+2401029,Joel Benjamin,Computer Engineering,88.1
+2201188,Febryon Christian,Business and Management,93.2
+2201231,Rahul Khan,Accountacy,88.1
