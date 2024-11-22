@@ -118,7 +118,7 @@ void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNo
         return;
     }
 
-    STUDENTITEM_NODE_PTR = *head;
+    STUDENTITEM_NODE_PTR current = *head;
     while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
         current = current->next;
     }
