@@ -21,6 +21,16 @@
 //TODO: Will need to sort array if we want to use fast search algorithms though.
 
 
+typedef struct student_struct {
+    int ID;
+    char name[MAX_NAME_LENGTH];
+    char programme[MAX_PROGRAMME_LENGTH];
+    double grade;
+    //struct studentItem *next;
+} STUDENT;
+
+
+
 int interpretCommand(char* rawUserInput, int inputLength) {
     int commandIndex = -1;                          //default value (if no valid command found in user input, return -1)
     char trimmedUserInput[MAX_UINPUT_LENGTH];       //
@@ -62,13 +72,7 @@ int interpretCommand(char* rawUserInput, int inputLength) {
     return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
 }
 
-typedef struct {
-    int ID;
-    char name[MAX_NAME_LENGTH];
-    char programme[MAX_PROGRAMME_LENGTH];
-    double grade;
-    //struct studentItem *next;
-} STUDENTITEM;
+
 
 //typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
 
