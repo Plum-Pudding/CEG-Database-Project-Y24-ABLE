@@ -118,8 +118,11 @@ int openFile(const char *filename) {
     return EXIT_SUCCESS;
 }
 
-void showALl() {
-    
+int showAll(const char *filename) {
+    if (openFile(filename) == EXIT_FAILURE) {
+        printf("Error occurred while opening the file.\n");
+    }
+    return 0;
 }
 
 void insertStudent() {
@@ -142,17 +145,16 @@ int main() {
     const char *filename = "P12_9-CMS.txt";
     char userInputRaw[MAX_UINPUT_LENGTH];
 
-    ////main loop
-    //while (1) {
+    /* opening declaration */
+    printf("==========================================================================================\n");
+    printf("\t\t\tDeclaration\n");
+    printf("==========================================================================================\n");
 
 
-
-    //    break;
-    //}
+    printf("SIT’s policy on copying does not allow the students to copy source code as well as assessment from another person or other places.It is the students’ responsibility to guarantee that their solutions are their own work.Meanwhile, the students must also ensure that their work is not by others.Where such plagiarism is detected, both of the assessments involved will receive ZERO mark.");
     
-    if (openFile(filename) == EXIT_FAILURE) {
-        printf("Error occurred while opening the file.\n");
-    }
+    
+    
     return 0;
 }
 
