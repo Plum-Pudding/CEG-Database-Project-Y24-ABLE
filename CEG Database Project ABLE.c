@@ -61,18 +61,33 @@ int interpretCommand(char* rawUserInput, int inputLength) {
     return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
 }
 
-struct studentItem {
+typedef struct studentItem {
     int ID;
     char name[MAX_NAME_LENGTH];
     char programme[MAX_PROGRAMME_LENGTH];
     double grade;
-};
+    struct studentItem *next;
+} STUDENTITEM_NODE;
+
+typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
+
+// CREATE NEW NODE
+STUDENTITEM_NODE_PTR createNode(const char *name) {
+    STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
+    if (newNode == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    strcpy(newNode->name, name);
+    newNode->next = NULL;
+    return newNode;
+}
 
 void showALl() {
 
 }
 
-void insertStudent() {
+void insertStudentAtStart() {
 
 }
 
