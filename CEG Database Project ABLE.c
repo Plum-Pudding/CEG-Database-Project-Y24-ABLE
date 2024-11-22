@@ -1,7 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_UINPUT_LENGTH 255
 #define MAX_NAME_LENGTH 255
@@ -20,6 +22,15 @@
 //TODO: ^ Depends on performance priority-- Linked list will be slow for indexing, but fast to insert rows in the middle of the list. 
 //TODO: Array of structs will be fast(er) to index and search the spec doesn't require db to be sorted so we can just stick on new rows to the end
 //TODO: Will need to sort array if we want to use fast search algorithms though.
+
+/* Creating student struct for student attributes */
+typedef struct student_struct {
+    int ID;
+    char name[MAX_NAME_LENGTH];
+    char programme[MAX_PROGRAMME_LENGTH];
+    double grade;
+    //struct studentItem *next;
+} STUDENTS;
 
 
 int interpretCommand(char* rawUserInput, int inputLength) {
@@ -63,72 +74,58 @@ int interpretCommand(char* rawUserInput, int inputLength) {
     return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
 }
 
-typedef struct studentItem {
-    int ID;
-    char name[MAX_NAME_LENGTH];
-    char programme[MAX_PROGRAMME_LENGTH];
-    double grade;
-    struct studentItem *next;
-} STUDENTITEM_NODE;
 
-typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
 
-// CREATE NEW NODE
-STUDENTITEM_NODE_PTR createNode(int id, const char *name, const char *programme, double grade) {
-    STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
-    if (newNode == NULL) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-    newNode->ID = id;
+//typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
 
-    strcpy(newNode->name, name);
-    strcpy(newNode->programme, programme);
-
-    newNode->grade = grade;
-    newNode->next = NULL;
-
-    return newNode;
-}
-
-//void showALl() {
-// I DONT THINK WE NEED THIS YET
+//// CREATE NEW NODE
+//STUDENTITEM_NODE_PTR createNode(int id, const char *name, const char *programme, double grade) {
+//    STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
+//    if (newNode == NULL) {
+//        printf("Memory allocation failed.\n");
+//        exit(1);
+//    }
+//    newNode->ID = id;
+//
+//    strcpy(newNode->name, name);
+//    strcpy(newNode->programme, programme);
+//
+//    newNode->grade = grade;
+//    //newNode->next = NULL;
+//
+//    return newNode;
 //}
 
-void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
-    newNode->next = *head;
-    *head = newNode;
+int openFile(const char *filename) {
+    STUDENTS student;
+    /* open the file */
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        perror("Failed to open file");
+        return EXIT_FAILURE;
+    }
+    /* print header row */
+    printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+    printf("----------------------------------------------------------------------------------------------\n");
+
+    /* read until the end of the file */
+    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+        /* print the student records */
+        printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
+    }
+    /* clean up*/
+    fclose(file);
+    return EXIT_SUCCESS;
 }
 
-void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
-    if (*head == NULL) {
-        *head = newNode;
-        return;
+int showAll(const char *filename) {
+    if (openFile(filename) == EXIT_FAILURE) {
+        printf("Error occurred while opening the file.\n");
     }
-
-    STUDENTITEM_NODE_PTR current = *head;
-    while (current->next != NULL) {
-        current = current->next;
-    }
-    current->next = newNode;
+    return 0;
 }
 
-void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
-    if (*head == NULL || strcmp(newNode->name, (*head)->name) < 0) {
-        insertStudentAtStart(head, newNode);
-        return;
-    }
-
-    STUDENTITEM_NODE_PTR current = *head;
-    while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
-        current = current->next;
-    }
-    
-    newNode->next = current->next;
-    current->next = newNode;
-}
-
-void queryID() {
+void insertStudent() {
 
 }
 
@@ -145,20 +142,68 @@ void saveDB() {
 }
 
 int main() {
-    FILE* file = fopen("P12_9-CMS.txt", "r");
-    if (!file) {
-        perror("Failed to open file");
-        return EXIT_FAILURE;
-    }
-
+    const char *filename = "P12_9-CMS.txt";
     char userInputRaw[MAX_UINPUT_LENGTH];
 
-    //main loop
-    while (1) {
+    /* opening declaration */
+    printf("==========================================================================================\n");
+    printf("\t\t\tDeclaration\n");
+    printf("==========================================================================================\n");
+    printf("SIT's policy on copying does not allow the students to copy source\n");
+    printf("code as well as assessment solutions from another person or other\n");
+    printf("places. It is the students' responsibility to guarantee that their\n");
+    printf("assessment solutions are their own work. Meanwhile, the students\n");
+    printf("must also ensure that their work is not accessible by others. Where\n");
+    printf("such plagiarism is detected, both of the assessments involved will\n");
+    printf("receive ZERO marks.\n\n");
 
+    printf("We hereby declare that:\n");
+    printf("  * We fully understand and agree to the abovementioned plagiarism policy.\n");
+    printf("  * We did not copy any code from others or from other places.\n");
+    printf("  * We did not share our codes with others or upload to any other places\n");
+    printf("    for public access and will not do that in the future.\n");
+    printf("  * We agree that our project will receive Zero mark if there is any\n");
+    printf("    plagiarism detected.\n");
+    printf("  * We agree that we will not disclose any information or material of the\n");
+    printf("    group project to others or upload to any other places for public access.\n\n");
 
+    printf("Declared by: Group Name (please insert your group name)\n");
 
-        break;
-    }
+    
+    
+    
     return 0;
 }
+
+//void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
+//    newNode->next = *head;
+//    *head = newNode;
+//}
+//
+//void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+//    if (*head == NULL) {
+//        *head = newNode;
+//        return;
+//    }
+//
+//    STUDENTITEM_NODE_PTR current = *head;
+//    while (current->next != NULL) {
+//        current = current->next;
+//    }
+//    current->next = newNode;
+//}
+//
+//void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+//    if (*head == NULL || strcmp(newNode->name, (*head)->name) < 0) {
+//        insertStudentAtStart(head, newNode);
+//        return;
+//    }
+//
+//    STUDENTITEM_NODE_PTR current = *head;
+//    while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
+//        current = current->next;
+//    }
+//    
+//    newNode->next = current->next;
+//    current->next = newNode;
+//}
