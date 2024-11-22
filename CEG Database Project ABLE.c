@@ -169,7 +169,6 @@ int main() {
 
     printf("Declared by: Group Name (please insert your group name)\n");
 
-    printf("SIT’s policy on copying does not allow the students to copy source code as well as assessment from another person or other places.It is the students’ responsibility to guarantee that their solutions are their own work.Meanwhile, the students must also ensure that their work is not by others.Where such plagiarism is detected, both of the assessments involved will receive ZERO mark.");
     
     
     
