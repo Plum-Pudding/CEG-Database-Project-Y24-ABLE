@@ -170,7 +170,7 @@ int main() {
     printf("Declared by: Group Name (P12_9)\n");
     printf("James\n");
     printf("Hanif\t2401048\n");
-    printf("Kugan\n");
+    printf("Kugan\t2401294\n");
     printf("Wei Xiang\n");
     printf("Justin\n");
     printf("Xuande\n");
