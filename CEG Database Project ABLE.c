@@ -62,37 +62,62 @@ int interpretCommand(char* rawUserInput, int inputLength) {
     return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
 }
 
-typedef struct studentItem {
+typedef struct {
     int ID;
     char name[MAX_NAME_LENGTH];
     char programme[MAX_PROGRAMME_LENGTH];
     double grade;
-    struct studentItem *next;
-} STUDENTITEM_NODE;
+    //struct studentItem *next;
+} STUDENTITEM;
 
-typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
+//typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
 
-// CREATE NEW NODE
-STUDENTITEM_NODE_PTR createNode(int id, const char *name, const char *programme, double grade) {
-    STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
-    if (newNode == NULL) {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
-    newNode->ID = id;
-
-    strcpy(newNode->name, name);
-    strcpy(newNode->programme, programme);
-
-    newNode->grade = grade;
-    newNode->next = NULL;
-
-    return newNode;
-}
+//// CREATE NEW NODE
+//STUDENTITEM_NODE_PTR createNode(int id, const char *name, const char *programme, double grade) {
+//    STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
+//    if (newNode == NULL) {
+//        printf("Memory allocation failed.\n");
+//        exit(1);
+//    }
+//    newNode->ID = id;
+//
+//    strcpy(newNode->name, name);
+//    strcpy(newNode->programme, programme);
+//
+//    newNode->grade = grade;
+//    //newNode->next = NULL;
+//
+//    return newNode;
+//}
 
 //void showALl() {
 // I DONT THINK WE NEED THIS YET
 //}
+
+void openFile(const char* filename) {
+
+    int id;
+    char name[MAX_NAME_LENGTH];
+    char programme[MAX_PROGRAMME_LENGTH];
+    double grade;
+    /* open the file */
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        perror("Failed to open file");
+        return EXIT_FAILURE;
+    }
+    /* read until the end of the file */
+    printf("%10s\t%20s\t%20s\t%10s\n", "ID", "Name", "Programme", "Grade");
+    while (!feof(file)) {
+        fscanf(file, "%d19s%lf", &id, name, programme, &grade);
+        printf("%10s\t%20s\t%20s\t%10s\n", id, name, programme, grade);
+    }
+    /* clean up*/
+    fclose(file);
+    return 0;
+
+    
+}
 
 void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
     newNode->next = *head;
@@ -127,9 +152,6 @@ void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNo
     current->next = newNode;
 }
 
-void queryID() {
-
-}
 
 void updateStudent() {
 
@@ -144,12 +166,7 @@ void saveDB() {
 }
 
 int main() {
-    FILE* file = fopen("P12_9-CMS.txt", "r");
-    if (!file) {
-        perror("Failed to open file");
-        return EXIT_FAILURE;
-    }
-
+    char filename[50] = "P12_9-CMS.txt";
     char userInputRaw[MAX_UINPUT_LENGTH];
 
     //main loop
