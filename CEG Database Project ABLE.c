@@ -155,9 +155,11 @@ int main() {
     printf("      *   *   *   *         *               *                *                *            *  *      *   *     * *             \n");
     printf("       * *     * *          *               *                *                *            *  *       * *      * *             \n");
     printf("        *       *           **************  ***************  **************   **************  *        *       * **************\n\n\n");
+    printf("\033[0;32m");
     printf("==================================================================\n");
     printf("\t\t\tDeclaration\n");
     printf("==================================================================\n");
+    printf("\033[0;0m"); 
     printf("SIT's policy on copying does not allow the students to copy source\n");
     printf("code as well as assessment solutions from another person or other\n");
     printf("places. It is the students' responsibility to guarantee that their\n");
