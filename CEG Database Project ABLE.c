@@ -72,23 +72,30 @@ typedef struct studentItem {
 typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
 
 // CREATE NEW NODE
-STUDENTITEM_NODE_PTR createNode(const char *name) {
+STUDENTITEM_NODE_PTR createNode(int id, const char *name, const char *programme, double grade) {
     STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
     if (newNode == NULL) {
         printf("Memory allocation failed.\n");
         exit(1);
     }
+    newNode->ID = id;
+
     strcpy(newNode->name, name);
+    strcpy(newNode->programme, programme);
+
+    newNode->grade = grade;
     newNode->next = NULL;
+
     return newNode;
 }
 
-void showALl() {
+//void showALl() {
+// I DONT THINK WE NEED THIS YET
+//}
 
-}
-
-void insertStudentAtStart() {
-
+void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
+    newNode->next = *head;
+    *head = newNode;
 }
 
 void queryID() {
