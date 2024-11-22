@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -123,38 +125,38 @@ void openFile(const char* filename) {
     
 }
 
-void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
-    newNode->next = *head;
-    *head = newNode;
-}
-
-void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
-    if (*head == NULL) {
-        *head = newNode;
-        return;
-    }
-
-    STUDENTITEM_NODE_PTR current = *head;
-    while (current->next != NULL) {
-        current = current->next;
-    }
-    current->next = newNode;
-}
-
-void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
-    if (*head == NULL || strcmp(newNode->name, (*head)->name) < 0) {
-        insertStudentAtStart(head, newNode);
-        return;
-    }
-
-    STUDENTITEM_NODE_PTR current = *head;
-    while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
-        current = current->next;
-    }
-    
-    newNode->next = current->next;
-    current->next = newNode;
-}
+//void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
+//    newNode->next = *head;
+//    *head = newNode;
+//}
+//
+//void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+//    if (*head == NULL) {
+//        *head = newNode;
+//        return;
+//    }
+//
+//    STUDENTITEM_NODE_PTR current = *head;
+//    while (current->next != NULL) {
+//        current = current->next;
+//    }
+//    current->next = newNode;
+//}
+//
+//void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+//    if (*head == NULL || strcmp(newNode->name, (*head)->name) < 0) {
+//        insertStudentAtStart(head, newNode);
+//        return;
+//    }
+//
+//    STUDENTITEM_NODE_PTR current = *head;
+//    while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
+//        current = current->next;
+//    }
+//    
+//    newNode->next = current->next;
+//    current->next = newNode;
+//}
 
 
 void updateStudent() {
