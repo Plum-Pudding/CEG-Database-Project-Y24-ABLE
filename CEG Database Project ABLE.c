@@ -175,7 +175,17 @@ int main() {
     printf("Justin\n");
     printf("Xuande\n");
 
-    
+    while (1) {
+        printf("Type OPEN to open the student database.");
+        scanf(userInputRaw, sizeof(userInputRaw), stdin);
+        if (userInputRaw == "OPEN") {
+            return openFile;
+        }
+        else if (userInputRaw == NULL) {
+            printf("Wrong input bro");
+            continue;
+        }
+    }
     
     
     return 0;
