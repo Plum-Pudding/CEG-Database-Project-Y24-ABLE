@@ -146,6 +146,15 @@ int main() {
     char userInputRaw[MAX_UINPUT_LENGTH];
 
     /* opening declaration */
+    printf("*                       *   **************  *                **************   **************  *                * **************\n");
+    printf(" *                     *    *               *                *                *            *  * *             ** *             \n");
+    printf("  *                   *     *               *                *                *            *  *  *           * * *             \n");
+    printf("   *                 *      *               *                *                *            *  *   *         *  * *             \n");
+    printf("    *       *       *       **************  *                *                *            *  *    *       *   * **************\n");
+    printf("     *     * *     *        *               *                *                *            *  *     *     *    * *             \n");
+    printf("      *   *   *   *         *               *                *                *            *  *      *   *     * *             \n");
+    printf("       * *     * *          *               *                *                *            *  *       * *      * *             \n");
+    printf("        *       *           **************  ***************  **************   **************  *        *       * **************\n\n\n");
     printf("==================================================================\n");
     printf("\t\t\tDeclaration\n");
     printf("==================================================================\n");
@@ -170,7 +179,7 @@ int main() {
     printf("Declared by: Group Name (P12_9)\n");
     printf("James\n");
     printf("Hanif\t2401048\n");
-    printf("Kugan\n");
+    printf("Kugan\t2401294\n");
     printf("Wei Xiang\n");
     printf("Justin\n");
     printf("Xuande\n");
