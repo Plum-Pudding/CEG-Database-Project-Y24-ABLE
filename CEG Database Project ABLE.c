@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define MAX_UINPUT_LENGTH 255
@@ -115,8 +116,13 @@ void saveDB() {
 }
 
 int main() {
-    char userInputRaw[MAX_UINPUT_LENGTH];
+    FILE* file = fopen("P12_9-CMS.txt", "r");
+    if (!file) {
+        perror("Failed to open file");
+        return EXIT_FAILURE;
+    }
 
+    char userInputRaw[MAX_UINPUT_LENGTH];
 
     //main loop
     while (1) {
