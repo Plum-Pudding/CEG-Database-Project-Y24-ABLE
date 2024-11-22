@@ -101,11 +101,7 @@ int interpretCommand(char* rawUserInput, int inputLength) {
 //}
 
 void openFile(const char* filename) {
-
-    int id;
-    char name[MAX_NAME_LENGTH];
-    char programme[MAX_PROGRAMME_LENGTH];
-    double grade;
+    STUDENT student;
     /* open the file */
     FILE* file = fopen(filename, "r");
     if (!file) {
@@ -115,14 +111,12 @@ void openFile(const char* filename) {
     /* read until the end of the file */
     printf("%10s\t%20s\t%20s\t%10s\n", "ID", "Name", "Programme", "Grade");
     while (!feof(file)) {
-        fscanf(file, "%d19s%lf", &id, name, programme, &grade);
-        printf("%10s\t%20s\t%20s\t%10s\n", id, name, programme, grade);
+        fscanf(file, "%d%255s%255s%lf", student.ID, student.name, student.programme, student.grade);
+        printf("%10s\t%20s\t%20s\t%10s\n", student.ID, student.name, student.programme, student.grade);
     }
     /* clean up*/
     fclose(file);
     return 0;
-
-    
 }
 
 //void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
