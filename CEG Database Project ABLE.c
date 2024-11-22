@@ -149,7 +149,25 @@ int main() {
     printf("==========================================================================================\n");
     printf("\t\t\tDeclaration\n");
     printf("==========================================================================================\n");
+    printf("SIT's policy on copying does not allow the students to copy source\n");
+    printf("code as well as assessment solutions from another person or other\n");
+    printf("places. It is the students' responsibility to guarantee that their\n");
+    printf("assessment solutions are their own work. Meanwhile, the students\n");
+    printf("must also ensure that their work is not accessible by others. Where\n");
+    printf("such plagiarism is detected, both of the assessments involved will\n");
+    printf("receive ZERO marks.\n\n");
 
+    printf("We hereby declare that:\n");
+    printf("  * We fully understand and agree to the abovementioned plagiarism policy.\n");
+    printf("  * We did not copy any code from others or from other places.\n");
+    printf("  * We did not share our codes with others or upload to any other places\n");
+    printf("    for public access and will not do that in the future.\n");
+    printf("  * We agree that our project will receive Zero mark if there is any\n");
+    printf("    plagiarism detected.\n");
+    printf("  * We agree that we will not disclose any information or material of the\n");
+    printf("    group project to others or upload to any other places for public access.\n\n");
+
+    printf("Declared by: Group Name (please insert your group name)\n");
 
     printf("SIT’s policy on copying does not allow the students to copy source code as well as assessment from another person or other places.It is the students’ responsibility to guarantee that their solutions are their own work.Meanwhile, the students must also ensure that their work is not by others.Where such plagiarism is detected, both of the assessments involved will receive ZERO mark.");
     
