@@ -146,9 +146,9 @@ int main() {
     char userInputRaw[MAX_UINPUT_LENGTH];
 
     /* opening declaration */
-    printf("==========================================================================================\n");
+    printf("==================================================================\n");
     printf("\t\t\tDeclaration\n");
-    printf("==========================================================================================\n");
+    printf("==================================================================\n");
     printf("SIT's policy on copying does not allow the students to copy source\n");
     printf("code as well as assessment solutions from another person or other\n");
     printf("places. It is the students' responsibility to guarantee that their\n");
@@ -167,7 +167,13 @@ int main() {
     printf("  * We agree that we will not disclose any information or material of the\n");
     printf("    group project to others or upload to any other places for public access.\n\n");
 
-    printf("Declared by: Group Name (please insert your group name)\n");
+    printf("Declared by: Group Name (P12_9)\n");
+    printf("James\n");
+    printf("Hanif\t2401048\n");
+    printf("Kugan\n");
+    printf("Wei Xiang\n");
+    printf("Justin\n");
+    printf("Xuande\n");
 
     
     
