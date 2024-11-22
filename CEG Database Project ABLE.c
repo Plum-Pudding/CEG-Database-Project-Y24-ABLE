@@ -99,6 +99,23 @@ void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNo
     *head = newNode;
 }
 
+void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    STUDENTITEM_NODE_PTR current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+
+}
+
 void queryID() {
 
 }
