@@ -113,7 +113,18 @@ void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode
 }
 
 void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
+    if (*head == NULL || strcmp(newNode->name, (*head)->name) < 0) {
+        insertStudentAtStart(head, newNode);
+        return;
+    }
 
+    STUDENTITEM_NODE_PTR = *head;
+    while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
+        current = current->next;
+    }
+    
+    newNode->next = current->next;
+    current->next = newNode;
 }
 
 void queryID() {
