@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_UINPUT_LENGTH 255
 #define MAX_NAME_LENGTH 255
@@ -22,15 +23,14 @@
 //TODO: Array of structs will be fast(er) to index and search the spec doesn't require db to be sorted so we can just stick on new rows to the end
 //TODO: Will need to sort array if we want to use fast search algorithms though.
 
-
+/* Creating student struct for student attributes */
 typedef struct student_struct {
     int ID;
     char name[MAX_NAME_LENGTH];
     char programme[MAX_PROGRAMME_LENGTH];
     double grade;
     //struct studentItem *next;
-} STUDENT;
-
+} STUDENTS;
 
 
 int interpretCommand(char* rawUserInput, int inputLength) {
@@ -96,26 +96,63 @@ int interpretCommand(char* rawUserInput, int inputLength) {
 //    return newNode;
 //}
 
-//void showALl() {
-// I DONT THINK WE NEED THIS YET
-//}
-
-void openFile(const char* filename) {
-    STUDENT student;
+int openFile(const char *filename) {
+    STUDENTS student;
     /* open the file */
     FILE* file = fopen(filename, "r");
     if (!file) {
         perror("Failed to open file");
         return EXIT_FAILURE;
     }
+    /* print header row */
+    printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+    printf("----------------------------------------------------------------------------------------------\n");
+
     /* read until the end of the file */
-    printf("%10s\t%20s\t%20s\t%10s\n", "ID", "Name", "Programme", "Grade");
-    while (!feof(file)) {
-        fscanf(file, "%d%255s%255s%lf", student.ID, student.name, student.programme, student.grade);
-        printf("%10s\t%20s\t%20s\t%10s\n", student.ID, student.name, student.programme, student.grade);
+    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+        /* print the student records */
+        printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
     }
     /* clean up*/
     fclose(file);
+    return EXIT_SUCCESS;
+}
+
+void showALl() {
+    
+}
+
+void insertStudent() {
+
+}
+
+void updateStudent() {
+
+}
+
+void deleteStudent() {
+
+}
+
+void saveDB() {
+
+}
+
+int main() {
+    const char *filename = "P12_9-CMS.txt";
+    char userInputRaw[MAX_UINPUT_LENGTH];
+
+    ////main loop
+    //while (1) {
+
+
+
+    //    break;
+    //}
+    
+    if (openFile(filename) == EXIT_FAILURE) {
+        printf("Error occurred while opening the file.\n");
+    }
     return 0;
 }
 
@@ -151,30 +188,3 @@ void openFile(const char* filename) {
 //    newNode->next = current->next;
 //    current->next = newNode;
 //}
-
-
-void updateStudent() {
-
-}
-
-void deleteStudent() {
-
-}
-
-void saveDB() {
-
-}
-
-int main() {
-    char filename[50] = "P12_9-CMS.txt";
-    char userInputRaw[MAX_UINPUT_LENGTH];
-
-    //main loop
-    while (1) {
-
-
-
-        break;
-    }
-    return 0;
-}
