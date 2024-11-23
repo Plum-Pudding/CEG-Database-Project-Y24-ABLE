@@ -19,7 +19,7 @@
 #define UPDATE "UPDATE"
 #define DELETE "DELETE"
 #define SAVE "SAVE"
-#define END_MY_SUFFERING "***" 
+#define END_MY_SUFFERING "EXIT" 
 
 //TODO: make a command detection function-- takes string (user inputted command) as input, returns an int corresponding to command-- see below
 //TODO: main loop contains an perpetual loop
@@ -106,7 +106,7 @@ int showAll(FILE* file) {
     /* print header row */
     printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
     printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
-    printf("-----------------------------------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------------------\n");
 
     /* to reset the file pointer to the beginning before reading */
     rewind(file);
@@ -119,7 +119,7 @@ int showAll(FILE* file) {
     return EXIT_SUCCESS;
 }
 
-int checkStudentID(FILE* file, int ID) {
+int checkStudentID(FILE *file, int ID) {
     STUDENTS student;
 
     rewind(file);
@@ -133,7 +133,7 @@ int checkStudentID(FILE* file, int ID) {
     
 }
 
-FILE* insertStudent(FILE* file, const char *filename, int ID, const char *name, const char *programme, double grade) {
+int insertStudent(FILE* file, const char *filename, int ID, const char *name, const char *programme, double grade) {
     STUDENTS student;
 
     /* rewind the pointer to check for duplicates */
@@ -142,7 +142,7 @@ FILE* insertStudent(FILE* file, const char *filename, int ID, const char *name, 
     while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
         if (student.ID == ID) {
             printf("CMS: The record with ID=%d already exists.", ID);
-            return file;
+            return EXIT_FAILURE;
         }
     }
 
@@ -151,7 +151,7 @@ FILE* insertStudent(FILE* file, const char *filename, int ID, const char *name, 
     file = fopen(filename, "a");
     if (!file) {
         perror("Failed to open file for appending");
-        return NULL;
+        return EXIT_FAILURE;
     }
 
     /* append the new student record to the file */
@@ -161,13 +161,8 @@ FILE* insertStudent(FILE* file, const char *filename, int ID, const char *name, 
     /* close after appending */
     fclose(file);
 
-    /* Reopen file in read mode */
-    file = fopen(filename, "r");
-    if (!file) {
-        perror("Failed to reopen file after appending.");
-        return NULL;
-    }
-    return file;
+    
+    return EXIT_SUCCESS;
 }
 
 void updateStudent() {
@@ -270,7 +265,7 @@ int main() {
     while (1) {
         printf("\n");
         printf("TYPE A COMMAND:\n");
-        printf("%-15s%-15s%-15s%-15s%-15s%-15s\n", "SHOW ALL", "INSERT", "QUERY", "UPDATE", "DELETE", "SAVE");
+        printf("%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n", "SHOW ALL", "INSERT", "QUERY", "UPDATE", "DELETE", "SAVE", "EXIT");
         printf("\n");
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
@@ -294,21 +289,63 @@ int main() {
             printf("Unknown bro: %s\n", userInputRaw);
         }*/
 
-        if (strncmp(userInputRaw, INSERT, strlen(INSERT)) == 0) {
+        if (strcmp(userInputRaw, INSERT) == 0) {
             int ID;
-            char name[MAX_NAME_LENGTH] = {0};
-            char programme[MAX_PROGRAMME_LENGTH] = {0};
+            char name[MAX_NAME_LENGTH];
+            char programme[MAX_PROGRAMME_LENGTH];
             double grade;
 
-
-            if (ID < 2000000 || ID > 2900000) {
+            printf("INSERT ID=");
+            if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2900000) {
                 printf("Error: ID must be 7 digits and according to SIT format.\n");
+                while (getchar() != '\n'); // cldear invalid input
+                continue;
+            }
+            while (getchar() != '\n');
+
+            if (checkStudentID(file, ID) == EXIT_FAILURE) {
                 continue;
             }
 
-            if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
-                printf("Failed to insert the student. Try again.\n");
+            /* NAME */
+            printf("Name=");
+            if (fgets(name, MAX_NAME_LENGTH, stdin) == NULL || name[0] == '\n') {
+                printf("Error: Invalid name.\n");
+                continue;
             }
+            name[strcspn(name, "\n")] = 0; // remove newline character
+
+            /* PROGRAMME */
+            printf("Programme=");
+            if (fgets(programme, MAX_PROGRAMME_LENGTH, stdin) == NULL || programme[0] == '\n') {
+                printf("Error: Invalid programme.\n");
+                continue;
+            }
+            programme[strcspn(programme, "\n")] = 0;
+
+            /* GRADE */
+            printf("Grade=");
+            if (scanf("%lf", &grade) != 1 || grade < 0.0 || grade > 100.0) {
+                printf("Error: Invalid grade. Please enter a value between 0 - 100.\n");
+                while (getchar() != '\n');
+                continue;
+            }
+            while (getchar() != '\n'); // clear leftover newline
+
+            /* Call insertStudent to handle inserting of student */
+            if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
+                printf("Failed to insert the student. Please try again.\n");
+            }
+            else {
+                /* Reopen file in read mode */
+                file = fopen(filename, "r");
+                if (!file) {
+                    perror("Failed to reopen file after appending.\n");
+                    return EXIT_FAILURE;
+                }
+            }
+
+            continue;
             
         }
         
