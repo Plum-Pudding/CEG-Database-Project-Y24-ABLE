@@ -14,6 +14,11 @@
 
 #define OPENFILE "OPEN"
 #define SHOWALL "SHOW ALL"
+#define INSERT "INSERT"
+#define QUERY "QUERY"
+#define UPDATE "UPDATE"
+#define DELETE "DELETE"
+#define SAVE "SAVE"
 #define END_MY_SUFFERING "***" 
 
 //TODO: make a command detection function-- takes string (user inputted command) as input, returns an int corresponding to command-- see below
@@ -113,8 +118,53 @@ int showAll(FILE* file) {
     return EXIT_SUCCESS;
 }
 
-void insertStudent() {
+int checkStudentID(FILE* file, int ID) {
+    STUDENTS student;
 
+    rewind(file);
+    while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+        if (student.ID == ID) {
+            printf("CMS: The record with ID=%d already exists.", ID);
+            return EXIT_FAILURE;
+        }
+    }
+    return EXIT_SUCCESS;
+    
+}
+
+void insertStudent(FILE* file, const char *filename, int ID, const char name, const char programme, double grade) {
+    STUDENTS student;
+
+    /* rewind the pointer to check for duplicates */
+    rewind(file);
+
+ /*   while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+        if (student.ID == ID) {
+            printf("CMS: The record with ID=%d already exists.", ID);
+            return EXIT_FAILURE;
+        }
+    }*/
+
+    /* close the file for reading and reopen in append mode */ 
+    fclose(file);
+    file = fopen(filename, "a");
+    if (!file) {
+        perror("Failed to open file for appending");
+        return EXIT_FAILURE;
+    }
+
+    /* append the new student record to the file */
+    fprintf(file, "%d,%s,%s,%.2f\n", ID, name, programme, grade);
+    printf("CMS: A new record with ID=%d is successfully inserted.", ID);
+
+    /* close after appending */
+    fclose(file);
+    file = fopen(filename, "r");
+    if (!file) {
+        perror("Failed to reopen file after appending.");
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
 
 void updateStudent() {
@@ -135,7 +185,7 @@ int main() {
     FILE* file = NULL;
 
     int fileOpened = 0; // flag to check if file opened
-    int actionFlag = 0; // flag if user already input action or not after opening file
+    int idPass = 0; 
 
     /* opening declaration */
     printf("*                       *   **************  *                **************   **************  *                * **************\n");
@@ -178,9 +228,13 @@ int main() {
     printf("Justin\n");
     printf("Xuande\n");
 
+    printf("====================================================================================\n");
+
     /* loop to handle "OPEN" command */
     while (!file) {
+        printf("\n");
         printf("Type OPEN to open the student database.\n");
+        printf("\n");
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
             printf("Wrong input bro\n");
@@ -197,7 +251,7 @@ int main() {
         if (strcmp(userInputRaw, OPENFILE) == 0) {
             file = openFile(filename);
             if (file) {
-                printf("The database file %s is successfully opened.\n", filename);
+                printf("CMS: The database file %s is successfully opened.\n", filename);
                 memset(userInputRaw, 0, sizeof(userInputRaw));
             }
             else {
@@ -210,9 +264,11 @@ int main() {
     }
 
     /* loop to handle next commands */
-    while (1) {      
+    while (1) {
+        printf("\n");
         printf("TYPE A COMMAND:\n");
         printf("%-15s%-15s%-15s%-15s%-15s%-15s\n", "SHOW ALL", "INSERT", "QUERY", "UPDATE", "DELETE", "SAVE");
+        printf("\n");
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
             printf("Invalid command try again.\n");
@@ -231,9 +287,33 @@ int main() {
                 printf("Error displaying database.\n");
             }
         }
-        else {
+        /*else {
             printf("Unknown bro: %s\n", userInputRaw);
+        }*/
+
+        if (strcmp(userInputRaw, INSERT) == 0) {
+            int ID;
+            char name;
+            char programme;
+            double grade;
+
+            while (!idPass) {
+                printf("INSERT ID = ");
+
+                if (scanf("%d", &ID) != 1) {
+                    printf("Invalid ID try again.\n");
+                    while (getchar() != '\n');
+                    continue;
+                }
+                if (checkStudentID(file, ID) == EXIT_FAILURE) {
+                    continue;
+                }
+                idPass = 1;
+            }
+            printf("ID dont exist you're good to go.\n");
+            continue;
         }
+        
     }
 
     if (file) {
@@ -242,36 +322,3 @@ int main() {
 
     return 0;
 }
-
-//void insertStudentAtStart(STUDENTITEM_NODE_PTR *head, STUDENTITEM_NODE_PTR newNode) {
-//    newNode->next = *head;
-//    *head = newNode;
-//}
-//
-//void insertStudentAtEnd(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
-//    if (*head == NULL) {
-//        *head = newNode;
-//        return;
-//    }
-//
-//    STUDENTITEM_NODE_PTR current = *head;
-//    while (current->next != NULL) {
-//        current = current->next;
-//    }
-//    current->next = newNode;
-//}
-//
-//void insertStudentInOrder(STUDENTITEM_NODE_PTR* head, STUDENTITEM_NODE_PTR newNode) {
-//    if (*head == NULL || strcmp(newNode->name, (*head)->name) < 0) {
-//        insertStudentAtStart(head, newNode);
-//        return;
-//    }
-//
-//    STUDENTITEM_NODE_PTR current = *head;
-//    while (current->next != NULL && strcmp(current->next->name, newNode->name) < 0) {
-//        current = current->next;
-//    }
-//    
-//    newNode->next = current->next;
-//    current->next = newNode;
-//}
