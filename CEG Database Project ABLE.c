@@ -104,6 +104,7 @@ int showAll(FILE* file) {
     }
 
     /* print header row */
+    printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
     printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
     printf("-----------------------------------------------------------------------------------\n");
 
@@ -132,39 +133,41 @@ int checkStudentID(FILE* file, int ID) {
     
 }
 
-void insertStudent(FILE* file, const char *filename, int ID, const char name, const char programme, double grade) {
+FILE* insertStudent(FILE* file, const char *filename, int ID, const char *name, const char *programme, double grade) {
     STUDENTS student;
 
     /* rewind the pointer to check for duplicates */
     rewind(file);
 
- /*   while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
         if (student.ID == ID) {
             printf("CMS: The record with ID=%d already exists.", ID);
-            return EXIT_FAILURE;
+            return file;
         }
-    }*/
+    }
 
     /* close the file for reading and reopen in append mode */ 
     fclose(file);
     file = fopen(filename, "a");
     if (!file) {
         perror("Failed to open file for appending");
-        return EXIT_FAILURE;
+        return NULL;
     }
 
     /* append the new student record to the file */
     fprintf(file, "%d,%s,%s,%.2f\n", ID, name, programme, grade);
-    printf("CMS: A new record with ID=%d is successfully inserted.", ID);
+    printf("CMS: A new record with ID=%d is successfully inserted.\n", ID);
 
     /* close after appending */
     fclose(file);
+
+    /* Reopen file in read mode */
     file = fopen(filename, "r");
     if (!file) {
         perror("Failed to reopen file after appending.");
-        return EXIT_FAILURE;
+        return NULL;
     }
-    return EXIT_SUCCESS;
+    return file;
 }
 
 void updateStudent() {
@@ -291,27 +294,22 @@ int main() {
             printf("Unknown bro: %s\n", userInputRaw);
         }*/
 
-        if (strcmp(userInputRaw, INSERT) == 0) {
+        if (strncmp(userInputRaw, INSERT, strlen(INSERT)) == 0) {
             int ID;
-            char name;
-            char programme;
+            char name[MAX_NAME_LENGTH] = {0};
+            char programme[MAX_PROGRAMME_LENGTH] = {0};
             double grade;
 
-            while (!idPass) {
-                printf("INSERT ID = ");
 
-                if (scanf("%d", &ID) != 1) {
-                    printf("Invalid ID try again.\n");
-                    while (getchar() != '\n');
-                    continue;
-                }
-                if (checkStudentID(file, ID) == EXIT_FAILURE) {
-                    continue;
-                }
-                idPass = 1;
+            if (ID < 2000000 || ID > 2900000) {
+                printf("Error: ID must be 7 digits and according to SIT format.\n");
+                continue;
             }
-            printf("ID dont exist you're good to go.\n");
-            continue;
+
+            if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
+                printf("Failed to insert the student. Try again.\n");
+            }
+            
         }
         
     }
