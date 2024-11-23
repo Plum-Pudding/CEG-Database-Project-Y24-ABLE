@@ -10,6 +10,11 @@
 #define MAX_PROGRAMME_LENGTH 255
 #define SANITY -999
 #define CIGARETTES 500
+#define ID_LEN 7
+
+#define OPENFILE "OPEN"
+#define SHOWALL "SHOW ALL"
+#define END_MY_SUFFERING "***" 
 
 //TODO: make a command detection function-- takes string (user inputted command) as input, returns an int corresponding to command-- see below
 //TODO: main loop contains an perpetual loop
@@ -75,54 +80,37 @@ int interpretCommand(char* rawUserInput, int inputLength) {
 }
 
 
-
-//typedef STUDENTITEM_NODE *STUDENTITEM_NODE_PTR;
-
-//// CREATE NEW NODE
-//STUDENTITEM_NODE_PTR createNode(int id, const char *name, const char *programme, double grade) {
-//    STUDENTITEM_NODE_PTR newNode = (STUDENTITEM_NODE_PTR)malloc(sizeof(STUDENTITEM_NODE));
-//    if (newNode == NULL) {
-//        printf("Memory allocation failed.\n");
-//        exit(1);
-//    }
-//    newNode->ID = id;
-//
-//    strcpy(newNode->name, name);
-//    strcpy(newNode->programme, programme);
-//
-//    newNode->grade = grade;
-//    //newNode->next = NULL;
-//
-//    return newNode;
-//}
-
-int openFile(const char *filename) {
-    STUDENTS student;
+FILE* openFile(const char *filename) {
     /* open the file */
     FILE* file = fopen(filename, "r");
     if (!file) {
         perror("Failed to open file");
+        return NULL;
+    }
+    return file;
+}
+
+int showAll(FILE* file) {
+    STUDENTS student;
+    
+    if (!file) {
+        perror("Failed to open file.");
         return EXIT_FAILURE;
     }
+
     /* print header row */
     printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
-    printf("----------------------------------------------------------------------------------------------\n");
+    printf("-----------------------------------------------------------------------------------\n");
 
+    /* to reset the file pointer to the beginning before reading */
+    rewind(file);
+    
     /* read until the end of the file */
     while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
         /* print the student records */
         printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
     }
-    /* clean up*/
-    fclose(file);
     return EXIT_SUCCESS;
-}
-
-int showAll(const char *filename) {
-    if (openFile(filename) == EXIT_FAILURE) {
-        printf("Error occurred while opening the file.\n");
-    }
-    return 0;
 }
 
 void insertStudent() {
@@ -143,7 +131,11 @@ void saveDB() {
 
 int main() {
     const char *filename = "P12_9-CMS.txt";
-    char userInputRaw[MAX_UINPUT_LENGTH];
+    char userInputRaw[MAX_UINPUT_LENGTH + 1];
+    FILE* file = NULL;
+
+    int fileOpened = 0; // flag to check if file opened
+    int actionFlag = 0; // flag if user already input action or not after opening file
 
     /* opening declaration */
     printf("*                       *   **************  *                **************   **************  *                * **************\n");
@@ -184,19 +176,68 @@ int main() {
     printf("Justin\n");
     printf("Xuande\n");
 
-    while (1) {
-        printf("Type OPEN to open the student database.");
-        scanf(userInputRaw, sizeof(userInputRaw), stdin);
-        if (userInputRaw == "OPEN") {
-            return openFile;
+    /* loop to handle "OPEN" command */
+    while (!file) {
+        printf("Type OPEN to open the student database.\n");
+
+        if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
+            printf("Wrong input bro\n");
+            return 1;
         }
-        else if (userInputRaw == NULL) {
-            printf("Wrong input bro");
-            continue;
+
+        userInputRaw[strcspn(userInputRaw, "\n")] = 0;
+
+        if (strcmp(userInputRaw, END_MY_SUFFERING) == 0) {
+            printf("goodbye!\n");
+            return 0;
+        }
+        
+        if (strcmp(userInputRaw, OPENFILE) == 0) {
+            file = openFile(filename);
+            if (file) {
+                printf("The database file %s is successfully opened.\n", filename);
+                memset(userInputRaw, 0, sizeof(userInputRaw));
+            }
+            else {
+                printf("Failed to open database file. Try again.\n");
+            }
+        }
+        else {
+            printf("Unknown command: %s\n", userInputRaw);
         }
     }
-    
-    
+
+    /* loop to handle next commands */
+    while (1) {      
+        printf("TYPE A COMMAND:\n");
+        printf("%-15s%-15s%-15s%-15s%-15s%-15s\n", "SHOW ALL", "INSERT", "QUERY", "UPDATE", "DELETE", "SAVE");
+
+        if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
+            printf("Invalid command try again.\n");
+            continue;
+        }
+
+        userInputRaw[strcspn(userInputRaw, "\n")] = 0;
+
+        if (strcmp(userInputRaw, END_MY_SUFFERING) == 0) {
+            printf("goodbye!\n");
+            break;
+        }
+
+        if (strcmp(userInputRaw, SHOWALL) == 0) {
+            if (showAll(file) == EXIT_FAILURE) {
+                printf("Error displaying database.\n");
+            }
+        }
+        else {
+            printf("Unknown bro: %s\n", userInputRaw);
+        }
+    }
+
+    if (file) {
+        fclose(file);
+    }
+
     return 0;
 }
 
