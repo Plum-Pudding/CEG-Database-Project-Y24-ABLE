@@ -161,12 +161,31 @@ int insertStudent(FILE* file, const char *filename, int ID, const char *name, co
     /* close after appending */
     fclose(file);
 
-    
     return EXIT_SUCCESS;
 }
 
-void updateStudent() {
+int queryStudent(FILE *file, int ID) {
+    STUDENTS student;
+    int found = 0; // flag if ID is found or not
 
+    /* ensure file pointer is at the beginning */
+    rewind(file);
+
+    while (fscanf(file, "%d, %49[^,], %99[^,], %lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+        if (student.ID == ID) {
+            printf("CMS: The record with ID=%d is found in the data table.\n", ID);
+            printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+            printf("----------------------------------------------------------------------------------------------\n");
+            printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("CMS: The record with ID=%d does not exist.\n", ID);
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
 
 void deleteStudent() {
@@ -275,20 +294,20 @@ int main() {
 
         userInputRaw[strcspn(userInputRaw, "\n")] = 0;
 
+        /* EXIT */
         if (strcmp(userInputRaw, END_MY_SUFFERING) == 0) {
             printf("goodbye!\n");
             break;
         }
 
+        /* SHOW ALL */
         if (strcmp(userInputRaw, SHOWALL) == 0) {
             if (showAll(file) == EXIT_FAILURE) {
                 printf("Error displaying database.\n");
             }
         }
-        /*else {
-            printf("Unknown bro: %s\n", userInputRaw);
-        }*/
 
+        /* INSERT */
         if (strcmp(userInputRaw, INSERT) == 0) {
             int ID;
             char name[MAX_NAME_LENGTH];
@@ -296,7 +315,7 @@ int main() {
             double grade;
 
             printf("INSERT ID=");
-            if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2900000) {
+            if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
                 printf("Error: ID must be 7 digits and according to SIT format.\n");
                 while (getchar() != '\n'); // cldear invalid input
                 continue;
@@ -344,10 +363,51 @@ int main() {
                     return EXIT_FAILURE;
                 }
             }
-
             continue;
-            
         }
+
+        /* QUERY */
+        if (strcmp(userInputRaw, QUERY) == 0) {
+            int ID;
+
+            printf("QUERY ID=");
+            if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+                printf("Error: ID must be 7 digits and according to SIT format.\n");
+                while (getchar() != '\n'); // clear leftover newline
+                continue;
+            }
+            if (queryStudent(file, ID) == EXIT_FAILURE) {
+                while (getchar() != '\n'); // clear leftover newline
+                continue;
+            }
+            while (getchar() != '\n'); // clear leftover newline
+            continue;
+        }
+
+
+
+
+
+        /* UPDATE */
+
+
+
+
+
+
+
+
+        /* DELETE */
+
+
+
+
+
+
+
+
+
+        /* SAVE */
         
     }
 
