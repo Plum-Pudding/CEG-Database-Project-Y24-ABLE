@@ -270,7 +270,7 @@ int deleteStudent(FILE* file, const char *filename, int ID) {
             found = 1;
 
             char choice[10];
-            printf("Are you sure you want to delete record with ID=%d? Type \"Y\" to Confirm or type \"N\" to cancel.\n");
+            printf("Are you sure you want to delete record with ID=%d? Type \"Y\" to Confirm or type \"N\" to cancel.\n", ID);
             fgets(choice, sizeof(choice), stdin);
             choice[strcspn(choice, "\n")] = 0;  // remove newline character
 
@@ -292,7 +292,6 @@ int deleteStudent(FILE* file, const char *filename, int ID) {
 
     /* handle cases where ID not found */
     if (!found) {
-        printf("CMS: The record with ID=%d does not exist.\n", ID);
         remove("temp.txt");
         return EXIT_FAILURE;
     }
@@ -537,7 +536,14 @@ int main() {
 
             /* extract ID */
             if (deleteStudent(file, filename, ID) == EXIT_FAILURE) {
-                printf("CMS: Failed to delete the record for ID=%d.\n", ID);
+                printf("CMS: The record with ID=%d does not exist.\n", ID);
+
+                // reopen the file in read mode to ensure subsequent commands work
+                file = fopen(filename, "r");
+                if (!file) {
+                    perror("CMS: Failed to reopen the updated file.\n");
+                    return EXIT_FAILURE;
+                }
             }
             else {
                 file = fopen(filename, "r");
@@ -549,14 +555,11 @@ int main() {
             continue;
         }
 
-
-
-
-
-
-
-
         /* SAVE */
+        if (strcmp(userInputRaw, SAVE) == 0) {
+            printf("SAVING SOMETHING????\n");
+            continue;
+        }
         
     }
 
