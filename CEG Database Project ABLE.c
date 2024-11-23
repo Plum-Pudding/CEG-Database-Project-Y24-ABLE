@@ -15,7 +15,7 @@
 #define OPENFILE "OPEN"
 #define SHOWALL "SHOW ALL"
 #define INSERT "INSERT"
-#define QUERY "QUERY"
+#define QUERY "QUERY ID"
 #define UPDATE "UPDATE"
 #define DELETE "DELETE"
 #define SAVE "SAVE"
@@ -188,6 +188,68 @@ int queryStudent(FILE *file, int ID) {
     return EXIT_SUCCESS;
 }
 
+int updateStudent(FILE* file, const char *filename, int ID, const char *field, const char *newValue) {
+    STUDENTS student;
+    int found = 0;
+
+    /* Open a temporary file to rewrite the data */
+    FILE* tempFile = fopen("temp.txt", "w");
+    if (!tempFile) {
+        perror("Failed to open temporary file");
+        return EXIT_FAILURE;
+    }
+
+    /* Start from beginning of the file */
+    rewind(file);
+
+    /* Read each record and update if ID matches */
+    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+        if (student.ID == ID) {
+            found = 1;
+        
+            // update the appropriate field
+            if (strcmp(field, "NAME") == 0) {
+                strncpy(student.name, newValue, sizeof(student.name) - 1);
+            }
+            else if (strcmp(field, "PROGRAMME") == 0) {
+                strncpy(student.programme, newValue, sizeof(student.programme) - 1);
+            }
+            else if (strcmp(field, "GRADE") == 0) {
+                student.grade = atof(newValue); // convert string to double
+            }
+            else {
+                printf("Error: Invalid field '%s'. Allowed fields: Name, Programme, Grade.", field);
+                fclose(tempFile);
+                return EXIT_FAILURE;
+            }
+        }
+        /* write the record (updated or unchanged) to the temporary file */
+        fprintf(tempFile, "%d,%s,%s,%.2f\n", student.ID, student.name, student.programme, student.grade);
+    }
+
+    fclose(file);       // close the original file 
+    fclose(tempFile);   // close the temporary file
+
+    /* replace the original file with the updated file */
+    if (found) {
+        remove(filename);   // delete the og file
+        rename("temp.txt", filename);   // rename the temporary file to the original name
+        file = fopen(filename, "r");    // reopen the updated file in read mode
+        if (!file) {
+            perror("Failed to reopen updated file.\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else {
+        printf("CMS: The record with ID=%d does not exist.\n", ID);
+        remove("temp.txt"); // cleanup temporary file
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+
+}
+
 void deleteStudent() {
 
 }
@@ -254,7 +316,7 @@ int main() {
         printf("\n");
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
-            printf("Wrong input bro\n");
+            printf("CMS: Wrong input bro\n");
             return 1;
         }
 
@@ -276,7 +338,7 @@ int main() {
             }
         }
         else {
-            printf("Unknown command: %s\n", userInputRaw);
+            printf("CMS: Unknown command: %s\n", userInputRaw);
         }
     }
 
@@ -353,13 +415,13 @@ int main() {
 
             /* Call insertStudent to handle inserting of student */
             if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
-                printf("Failed to insert the student. Please try again.\n");
+                printf("CMS: Failed to insert the student. Please try again.\n");
             }
             else {
                 /* Reopen file in read mode */
                 file = fopen(filename, "r");
                 if (!file) {
-                    perror("Failed to reopen file after appending.\n");
+                    perror("CMS: Failed to reopen file after appending.\n");
                     return EXIT_FAILURE;
                 }
             }
@@ -367,29 +429,49 @@ int main() {
         }
 
         /* QUERY */
-        if (strcmp(userInputRaw, QUERY) == 0) {
+        if (strncmp(userInputRaw, "QUERY ID=", 9) == 0) {
             int ID;
 
-            printf("QUERY ID=");
-            if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+            if (sscanf(userInputRaw + 9, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
                 printf("Error: ID must be 7 digits and according to SIT format.\n");
-                while (getchar() != '\n'); // clear leftover newline
                 continue;
             }
+
             if (queryStudent(file, ID) == EXIT_FAILURE) {
-                while (getchar() != '\n'); // clear leftover newline
                 continue;
             }
-            while (getchar() != '\n'); // clear leftover newline
             continue;
         }
 
 
-
-
-
         /* UPDATE */
+        if (strncmp(userInputRaw, "UPDATE ID=", 10) == 0) {
+            int ID;
+            char field[50] = {0};
+            char newValue[100] = {0};
 
+            /* Extract ID */
+            if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+                printf("Error: ID must be 7 digits and according to SIT format.", ID);
+                continue;
+            }
+
+            /* Extract field to update its new value */
+            char *fieldStart = strchr(userInputRaw + 10, ' '); // find the space after the ID
+            if (!fieldStart || sscanf(fieldStart + 1, "%49[^=]=%99[^\n]", field, newValue) != 2) {
+                printf("Error: Invalid format. Use UPDATE ID=XXXXXXX Field=Value.\n");
+                continue;
+            }
+
+            /* Update the record */
+            if (updateStudent(file, filename, ID, field, newValue) == EXIT_FAILURE) {
+                printf("CMS: Failed to update the record for ID=%d", ID);
+            }
+            else {
+                printf("CMS: The record with ID=%d is successfully updated.", ID);
+            }
+            continue;
+        }
 
 
 
