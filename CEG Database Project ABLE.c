@@ -150,7 +150,7 @@ int insertStudent(FILE* file, const char *filename, int ID, const char *name, co
     fclose(file);
     file = fopen(filename, "a");
     if (!file) {
-        perror("Failed to open file for appending");
+        perror("CMS: Failed to open file for appending");
         return EXIT_FAILURE;
     }
 
