@@ -12,6 +12,8 @@
 #define CIGARETTES 500
 #define ID_LEN 7
 
+#define USERNAME "P12_9"
+
 #define OPENFILE "OPEN"
 #define SHOWALL "SHOW ALL"
 #define INSERT "INSERT"
@@ -89,7 +91,7 @@ FILE* openFile(const char *filename) {
     /* open the file */
     FILE* file = fopen(filename, "r");
     if (!file) {
-        perror("Failed to open file");
+        perror("Error: Failed to open file");
         return NULL;
     }
     return file;
@@ -122,6 +124,7 @@ int showAll(FILE* file) {
 int checkStudentID(FILE *file, int ID) {
     STUDENTS student;
 
+    /* rewind the pointer to the beginning of the data */
     rewind(file);
     while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
         if (student.ID == ID) {
@@ -130,7 +133,6 @@ int checkStudentID(FILE *file, int ID) {
         }
     }
     return EXIT_SUCCESS;
-    
 }
 
 int insertStudent(FILE* file, const char *filename, int ID, const char *name, const char *programme, double grade) {
@@ -195,7 +197,7 @@ int updateStudent(FILE* file, const char *filename, int ID, const char *field, c
     /* Open a temporary file to rewrite the data */
     FILE* tempFile = fopen("temp.txt", "w");
     if (!tempFile) {
-        perror("Failed to open temporary file");
+        perror("Error: Failed to open temporary file");
         return EXIT_FAILURE;
     }
 
@@ -236,7 +238,7 @@ int updateStudent(FILE* file, const char *filename, int ID, const char *field, c
         rename("temp.txt", filename);   // rename the temporary file to the original name
         file = fopen(filename, "r");    // reopen the updated file in read mode
         if (!file) {
-            perror("Failed to reopen updated file.\n");
+            perror("Error: Failed to reopen updated file.\n");
             return EXIT_FAILURE;
         }
     }
@@ -247,7 +249,6 @@ int updateStudent(FILE* file, const char *filename, int ID, const char *field, c
     }
 
     return EXIT_SUCCESS;
-
 }
 
 int deleteStudent(FILE* file, const char *filename, int ID) {
@@ -363,7 +364,7 @@ int main() {
     /* loop to handle "OPEN" command */
     while (!file) {
         printf("\n");
-        printf("Type OPEN to open the student database.\n");
+        printf("Type OPEN to open the \"StudentRecords\" data table.\n");
         printf("\n");
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
@@ -381,11 +382,11 @@ int main() {
         if (strcmp(userInputRaw, OPENFILE) == 0) {
             file = openFile(filename);
             if (file) {
-                printf("CMS: The database file %s is successfully opened.\n", filename);
+                printf("CMS: The database file \"%s\" is successfully opened.\n", filename);
                 memset(userInputRaw, 0, sizeof(userInputRaw));
             }
             else {
-                printf("Failed to open database file. Try again.\n");
+                printf("Error: Failed to open database file. Try again.\n");
             }
         }
         else {
@@ -399,9 +400,10 @@ int main() {
         printf("TYPE A COMMAND:\n");
         printf("%-15s%-15s%-15s%-15s%-15s%-15s%-15s\n", "SHOW ALL", "INSERT", "QUERY", "UPDATE", "DELETE", "SAVE", "EXIT");
         printf("\n");
+        printf("%s: ", USERNAME);
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
-            printf("Invalid command try again.\n");
+            printf("CMS: Invalid command try again.\n");
             continue;
         }
 
@@ -417,7 +419,9 @@ int main() {
         if (strcmp(userInputRaw, SHOWALL) == 0) {
             if (showAll(file) == EXIT_FAILURE) {
                 printf("Error displaying database.\n");
+                continue;
             }
+            continue;
         }
 
         /* INSERT */
@@ -503,7 +507,7 @@ int main() {
 
             /* Extract ID */
             if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
-                printf("Error: ID must be 7 digits and according to SIT format.", ID);
+                printf("Error: ID must be 7 digits and according to SIT format.\n", ID);
                 continue;
             }
 
@@ -516,10 +520,10 @@ int main() {
 
             /* Update the record */
             if (updateStudent(file, filename, ID, field, newValue) == EXIT_FAILURE) {
-                printf("CMS: Failed to update the record for ID=%d", ID);
+                printf("CMS: Failed to update the record for ID=%d.\n", ID);
             }
             else {
-                printf("CMS: The record with ID=%d is successfully updated.", ID);
+                printf("CMS: The record with ID=%d is successfully updated.\n", ID);
             }
             continue;
         }
@@ -530,7 +534,7 @@ int main() {
             int ID;
 
             if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999 ){
-                printf("Error: ID must be 7 digits and according to SIT format.", ID);
+                printf("Error: ID must be 7 digits and according to SIT format.\n", ID);
                 continue;
             }
 
@@ -557,8 +561,12 @@ int main() {
 
         /* SAVE */
         if (strcmp(userInputRaw, SAVE) == 0) {
-            printf("SAVING SOMETHING????\n");
+            printf("The database file \"%s\" is successfully saved.\n", filename);
             continue;
+        }
+
+        else {
+            printf("Unknown command: %s\n", userInputRaw);
         }
         
     }
