@@ -151,6 +151,7 @@ int loadDB(const char* filename) {
 /* SHOW ALL (MEMORY) */
 void showAll() {
     printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
+    printf("----------------------------------------------------------------------------------------------\n");
     printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
     printf("----------------------------------------------------------------------------------------------\n");
 
@@ -531,12 +532,12 @@ int main() {
     printf("    group project to others or upload to any other places for public access.\n\n");
 
     printf("Declared by: Group Name (P12_9)\n");
-    printf("James\n");
-    printf("Hanif\t2401048\n");
-    printf("Kugan\t2401294\n");
-    printf("Wei Xiang\n");
-    printf("Justin\n");
-    printf("Xuande\n");
+    printf("James\t\t2400688\n");
+    printf("Hanif\t\t2401048\n");
+    printf("Kugan\t\t2401294\n");
+    printf("Wei Xiang\t2402266\n");
+    printf("Justin\t\t2402740\n");
+    printf("Xuande\t\t2403461\n");
 
     printf("====================================================================================\n");
 
