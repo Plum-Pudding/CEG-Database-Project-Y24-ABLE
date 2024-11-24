@@ -595,7 +595,7 @@ int main() {
         printf("%s: ", USERNAME);
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
-            printf("CMS: Invalid command try again.\n");
+            printf("CMS: Invalid command, try again.\n");
             continue;
         }
 
@@ -607,80 +607,11 @@ int main() {
             break;
         }
 
-        /* SHOW ALL */
-        /*if (strcmp(userInputRaw, SHOWALL) == 0) {
-            if (showAll(file) == EXIT_FAILURE) {
-                printf("Error displaying database.\n");
-                continue;
-            }
-            continue;
-        }*/
-
         /* SHOW ALL (MEMORY) */
         if (strcmp(userInputRaw, SHOWALL) == 0) {
             showAll();
             continue;
         }
-
-        ///* INSERT */
-        //if (strcmp(userInputRaw, INSERT) == 0) {
-        //    int ID;
-        //    char name[MAX_NAME_LENGTH];
-        //    char programme[MAX_PROGRAMME_LENGTH];
-        //    double grade;
-
-        //    printf("INSERT ID=");
-        //    if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
-        //        printf("Error: ID must be 7 digits and according to SIT format.\n");
-        //        while (getchar() != '\n'); // cldear invalid input
-        //        continue;
-        //    }
-        //    while (getchar() != '\n');
-
-        //    if (checkStudentID(file, ID) == EXIT_FAILURE) {
-        //        continue;
-        //    }
-
-        //    /* NAME */
-        //    printf("Name=");
-        //    if (fgets(name, MAX_NAME_LENGTH, stdin) == NULL || name[0] == '\n') {
-        //        printf("Error: Invalid name.\n");
-        //        continue;
-        //    }
-        //    name[strcspn(name, "\n")] = 0; // remove newline character
-
-        //    /* PROGRAMME */
-        //    printf("Programme=");
-        //    if (fgets(programme, MAX_PROGRAMME_LENGTH, stdin) == NULL || programme[0] == '\n') {
-        //        printf("Error: Invalid programme.\n");
-        //        continue;
-        //    }
-        //    programme[strcspn(programme, "\n")] = 0;
-
-        //    /* GRADE */
-        //    printf("Grade=");
-        //    if (scanf("%lf", &grade) != 1 || grade < 0.0 || grade > 100.0) {
-        //        printf("Error: Invalid grade. Please enter a value between 0 - 100.\n");
-        //        while (getchar() != '\n');
-        //        continue;
-        //    }
-        //    while (getchar() != '\n'); // clear leftover newline
-
-        //    /* Call insertStudent to handle inserting of student */
-        //    if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
-        //        printf("CMS: Failed to insert the student. Please try again.\n");
-        //    }
-        //    else {
-        //        /* Reopen file in read mode */
-        //        file = fopen(filename, "r");
-        //        if (!file) {
-        //            perror("CMS: Failed to reopen file after appending.\n");
-        //            return EXIT_FAILURE;
-        //        }
-        //    }
-        //    continue;
-        //}
-
 
         /* INSERT (MEMORY) */
         if (strncmp(userInputRaw, "INSERT ID=", 10) == 0) {
@@ -730,23 +661,6 @@ int main() {
             continue;
         }
 
-
-
-        /* QUERY */
-        /*if (strncmp(userInputRaw, "QUERY ID=", 9) == 0) {
-            int ID;
-
-            if (sscanf(userInputRaw + 9, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
-                printf("Error: ID must be 7 digits and according to SIT format.\n");
-                continue;
-            }
-
-            if (queryStudent(file, ID) == EXIT_FAILURE) {
-                continue;
-            }
-            continue;
-        }*/
-
         /* QUERY (MEMORY) */
         if (strncmp(userInputRaw, "QUERY ID=", 9) == 0) {
             int ID;
@@ -761,37 +675,6 @@ int main() {
             }
             continue;
         }
-
-
-        ///* UPDATE */
-        //if (strncmp(userInputRaw, "UPDATE ID=", 10) == 0) {
-        //    int ID;
-        //    char field[50] = { 0 };
-        //    char newValue[100] = { 0 };
-
-        //    /* Extract ID */
-        //    if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
-        //        printf("Error: ID must be 7 digits and according to SIT format.\n", ID);
-        //        continue;
-        //    }
-
-        //    /* Extract field to update its new value */
-        //    char* fieldStart = strchr(userInputRaw + 10, ' '); // find the space after the ID
-        //    if (!fieldStart || sscanf(fieldStart + 1, "%49[^=]=%99[^\n]", field, newValue) != 2) {
-        //        printf("Error: Invalid format. Use UPDATE ID=XXXXXXX Field=Value.\n");
-        //        continue;
-        //    }
-
-        //    /* Update the record */
-        //    if (updateStudent(file, filename, ID, field, newValue) == EXIT_FAILURE) {
-        //        printf("CMS: Failed to update the record for ID=%d.\n", ID);
-        //    }
-        //    else {
-        //        printf("CMS: The record with ID=%d is successfully updated.\n", ID);
-        //    }
-        //    continue;
-        //}
-
 
         /* UPDATE (MEMORY) */
         if (strncmp(userInputRaw, "UPDATE ID=", 10) == 0) {
@@ -821,37 +704,6 @@ int main() {
             }
             continue;
         }
-
-
-        ///* DELETE */
-        //if (strncmp(userInputRaw, "DELETE ID=", 10) == 0) {
-        //    int ID;
-
-        //    if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999 ){
-        //        printf("Error: ID must be 7 digits and according to SIT format.\n");
-        //        continue;
-        //    }
-
-        //    /* extract ID */
-        //    if (deleteStudent(file, filename, ID) == EXIT_FAILURE) {
-        //        printf("CMS: The record with ID=%d does not exist.\n", ID);
-
-        //        // reopen the file in read mode to ensure subsequent commands work
-        //        file = fopen(filename, "r");
-        //        if (!file) {
-        //            perror("CMS: Failed to reopen the updated file.\n");
-        //            return EXIT_FAILURE;
-        //        }
-        //    }
-        //    else {
-        //        file = fopen(filename, "r");
-        //        if (!file) {
-        //            perror("CMS: Failed to reopen the updated file.\n");
-        //            return EXIT_FAILURE;
-        //        }
-        //    }
-        //    continue;
-        //}
 
         /* DELETE (MEMORY) */
         if (strncmp(userInputRaw, "DELETE ID=", 10) == 0) {
