@@ -7,3 +7,5 @@
 2401049,Michael Ross,Law School,99.90
 2401051,Raihan,Comp Sci,94.40
 2401052,Rifqy,Engineer,85.30
+2401053,Harvey Specter,Law,99.30
+2401055,Ben,CompSci,34.60
