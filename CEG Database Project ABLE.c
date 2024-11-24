@@ -148,6 +148,7 @@ int loadDB(const char* filename) {
 //    return EXIT_SUCCESS;
 //}
 
+/* SHOW ALL (MEMORY) */
 void showAll() {
     printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
     printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
@@ -165,6 +166,17 @@ int checkStudentID(FILE *file, int ID) {
     rewind(file);
     while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
         if (student.ID == ID) {
+            printf("CMS: The record with ID=%d already exists.", ID);
+            return EXIT_FAILURE;
+        }
+    }
+    return EXIT_SUCCESS;
+}
+
+/* Check ID (MEMORY) */
+int checkStudentIDMEM(int ID) {
+    for (int i = 0; i < studentCount; i++) {
+        if (studentRecords[i].ID == ID) {
             printf("CMS: The record with ID=%d already exists.", ID);
             return EXIT_FAILURE;
         }
@@ -203,19 +215,57 @@ int insertStudent(FILE* file, const char *filename, int ID, const char *name, co
     return EXIT_SUCCESS;
 }
 
-int queryStudent(FILE *file, int ID) {
-    STUDENTS student;
+int insertStudentMEM(int ID, const char* name, const char* programme, double grade) {
+    if (studentCount > MAX_STUDENTS) {
+        printf("CMS: Cannot add more students. Maximum capacity reached.\n");
+        return EXIT_FAILURE;
+    }
+
+    studentRecords[studentCount].ID = ID;
+    strncpy(studentRecords[studentCount].name, name, MAX_NAME_LENGTH - 1);
+    strncpy(studentRecords[studentCount].programme, programme, MAX_PROGRAMME_LENGTH - 1);
+    studentRecords[studentCount].grade = grade;
+
+    studentCount++;
+    printf("CMS A new record with ID=%d is successfully inserted.\n", ID);
+    
+    return EXIT_SUCCESS;
+}
+
+//int queryStudent(FILE *file, int ID) {
+//    STUDENTS student;
+//    int found = 0; // flag if ID is found or not
+//
+//    /* ensure file pointer is at the beginning */
+//    rewind(file);
+//
+//    while (fscanf(file, "%d, %49[^,], %99[^,], %lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+//        if (student.ID == ID) {
+//            printf("CMS: The record with ID=%d is found in the data table.\n", ID);
+//            printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+//            printf("----------------------------------------------------------------------------------------------\n");
+//            printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
+//            found = 1;
+//            break;
+//        }
+//    }
+//    if (!found) {
+//        printf("CMS: The record with ID=%d does not exist.\n", ID);
+//        return EXIT_FAILURE;
+//    }
+//    return EXIT_SUCCESS;
+//}
+
+/* QUERY (MEMORY) */
+int queryStudent(int ID) {
     int found = 0; // flag if ID is found or not
 
-    /* ensure file pointer is at the beginning */
-    rewind(file);
-
-    while (fscanf(file, "%d, %49[^,], %99[^,], %lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
-        if (student.ID == ID) {
+    for (int i = 0; i < studentCount; i++) {
+        if (studentRecords[i].ID == ID) {
             printf("CMS: The record with ID=%d is found in the data table.\n", ID);
             printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
             printf("----------------------------------------------------------------------------------------------\n");
-            printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
+            printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
             found = 1;
             break;
         }
@@ -343,8 +393,20 @@ int deleteStudent(FILE* file, const char *filename, int ID) {
     return EXIT_SUCCESS;
 }
 
-void saveDB() {
+int saveDB(const char *filename) {
+    FILE* file = fopen(filename, "w");
+    if (!file) {
+        perror("CMS: Failed to open file for writing.\n");
+        return EXIT_FAILURE;
+    }
 
+    for (int i = 0; i < studentCount; i++) {
+        fprintf(file, "%d,%s,%s,%.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
+    }
+
+    fclose(file);
+    printf("CMS: Database saved to file (%d records).\n", studentCount);
+    return EXIT_SUCCESS;
 }
 
 int main() {
@@ -477,22 +539,79 @@ int main() {
             continue;
         }
 
-        /* INSERT */
-        if (strcmp(userInputRaw, INSERT) == 0) {
+        ///* INSERT */
+        //if (strcmp(userInputRaw, INSERT) == 0) {
+        //    int ID;
+        //    char name[MAX_NAME_LENGTH];
+        //    char programme[MAX_PROGRAMME_LENGTH];
+        //    double grade;
+
+        //    printf("INSERT ID=");
+        //    if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+        //        printf("Error: ID must be 7 digits and according to SIT format.\n");
+        //        while (getchar() != '\n'); // cldear invalid input
+        //        continue;
+        //    }
+        //    while (getchar() != '\n');
+
+        //    if (checkStudentID(file, ID) == EXIT_FAILURE) {
+        //        continue;
+        //    }
+
+        //    /* NAME */
+        //    printf("Name=");
+        //    if (fgets(name, MAX_NAME_LENGTH, stdin) == NULL || name[0] == '\n') {
+        //        printf("Error: Invalid name.\n");
+        //        continue;
+        //    }
+        //    name[strcspn(name, "\n")] = 0; // remove newline character
+
+        //    /* PROGRAMME */
+        //    printf("Programme=");
+        //    if (fgets(programme, MAX_PROGRAMME_LENGTH, stdin) == NULL || programme[0] == '\n') {
+        //        printf("Error: Invalid programme.\n");
+        //        continue;
+        //    }
+        //    programme[strcspn(programme, "\n")] = 0;
+
+        //    /* GRADE */
+        //    printf("Grade=");
+        //    if (scanf("%lf", &grade) != 1 || grade < 0.0 || grade > 100.0) {
+        //        printf("Error: Invalid grade. Please enter a value between 0 - 100.\n");
+        //        while (getchar() != '\n');
+        //        continue;
+        //    }
+        //    while (getchar() != '\n'); // clear leftover newline
+
+        //    /* Call insertStudent to handle inserting of student */
+        //    if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
+        //        printf("CMS: Failed to insert the student. Please try again.\n");
+        //    }
+        //    else {
+        //        /* Reopen file in read mode */
+        //        file = fopen(filename, "r");
+        //        if (!file) {
+        //            perror("CMS: Failed to reopen file after appending.\n");
+        //            return EXIT_FAILURE;
+        //        }
+        //    }
+        //    continue;
+        //}
+
+
+        /* INSERT (MEMORY) */
+        if (strncmp(userInputRaw, "INSERT ID=", 10) == 0) {
             int ID;
             char name[MAX_NAME_LENGTH];
             char programme[MAX_PROGRAMME_LENGTH];
             double grade;
-
-            printf("INSERT ID=");
-            if (scanf("%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+            
+            if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
                 printf("Error: ID must be 7 digits and according to SIT format.\n");
-                while (getchar() != '\n'); // cldear invalid input
                 continue;
             }
-            while (getchar() != '\n');
 
-            if (checkStudentID(file, ID) == EXIT_FAILURE) {
+            if (checkStudentIDMEM(ID) == EXIT_FAILURE) {
                 continue;
             }
 
@@ -521,23 +640,17 @@ int main() {
             }
             while (getchar() != '\n'); // clear leftover newline
 
-            /* Call insertStudent to handle inserting of student */
-            if (insertStudent(file, filename, ID, name, programme, grade) == EXIT_FAILURE) {
-                printf("CMS: Failed to insert the student. Please try again.\n");
-            }
-            else {
-                /* Reopen file in read mode */
-                file = fopen(filename, "r");
-                if (!file) {
-                    perror("CMS: Failed to reopen file after appending.\n");
-                    return EXIT_FAILURE;
-                }
+            /* call insertStudent() to insert into memory */
+            if (insertStudentMEM(ID, name, programme, grade) == EXIT_FAILURE) {
+                printf("CMS: Failed to insert the student.\n");
             }
             continue;
         }
 
+
+
         /* QUERY */
-        if (strncmp(userInputRaw, "QUERY ID=", 9) == 0) {
+        /*if (strncmp(userInputRaw, "QUERY ID=", 9) == 0) {
             int ID;
 
             if (sscanf(userInputRaw + 9, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
@@ -546,6 +659,21 @@ int main() {
             }
 
             if (queryStudent(file, ID) == EXIT_FAILURE) {
+                continue;
+            }
+            continue;
+        }*/
+
+        /* QUERY (MEMORY) */
+        if (strncmp(userInputRaw, "QUERY ID=", 9) == 0) {
+            int ID;
+
+            if (sscanf(userInputRaw + 9, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+                printf("Error: ID must be 7 digits and according to SIT format.\n");
+                continue;
+            }
+
+            if (queryStudent(ID) == EXIT_FAILURE) {
                 continue;
             }
             continue;
@@ -614,8 +742,18 @@ int main() {
 
         /* SAVE */
         if (strcmp(userInputRaw, SAVE) == 0) {
-            printf("The database file \"%s\" is successfully saved.\n", filename);
-            continue;
+            if (fileLoaded) {
+                printf("CMS: Saving data to \"%s\"...\n", filename);
+                if (saveDB(filename) == EXIT_FAILURE) {
+                    printf("CMS: Failed to save the database.\n");
+                }
+                else {
+                    printf("CMS: Database saved successfully.\n");
+                }
+            }
+            else {
+                printf("CMS: No database is currently open to save.\n");
+            }
         }
 
         /* when user input an invalid command */
