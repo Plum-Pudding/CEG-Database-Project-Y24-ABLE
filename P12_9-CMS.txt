@@ -2,6 +2,6 @@
 2201234,Isaac Teo,Computer Science,63.40
 2304567,John Levoy,Digital Supply Chain,85.90
 2401038,John Htet,Digital Pen,68.45
-2401048,Hanif Fadhil,Law School,85.50
+2401048,Hanif Fadhil,Computer Engineering,85.50
 2401050,Donovan Khoo,Public Safety and Security,88.10
 2401049,Michael Ross,Law School,99.90

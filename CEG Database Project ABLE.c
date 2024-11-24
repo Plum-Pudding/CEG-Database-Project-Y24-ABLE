@@ -8,6 +8,7 @@
 #define MAX_UINPUT_LENGTH 255
 #define MAX_NAME_LENGTH 255
 #define MAX_PROGRAMME_LENGTH 255
+#define MAX_STUDENTS 100
 #define SANITY -999
 #define CIGARETTES 500
 #define ID_LEN 7
@@ -43,6 +44,9 @@ typedef struct student_struct {
     double grade;
     //struct studentItem *next;
 } STUDENTS;
+
+STUDENTS studentRecords[MAX_STUDENTS];
+int studentCount = 0;
 
 
 int interpretCommand(char* rawUserInput, int inputLength) {
@@ -97,28 +101,61 @@ FILE* openFile(const char *filename) {
     return file;
 }
 
-int showAll(FILE* file) {
-    STUDENTS student;
-    
+/* READ FILE AND LOAD INTO MEMORY */
+int loadDB(const char* filename) {
+    /* open the file */
+    FILE* file = fopen(filename, "r");
     if (!file) {
-        perror("Failed to open file.");
+        perror("CMS: Failed to open file");
         return EXIT_FAILURE;
     }
 
-    /* print header row */
+    studentCount = 0;
+    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &studentRecords[studentCount].ID, studentRecords[studentCount].name, studentRecords[studentCount].programme, &studentRecords[studentCount].grade) == 4) {
+        studentCount++;
+        if (studentCount >= MAX_STUDENTS) {
+            printf("CMS: Maximum number of students reached.\n");
+            break;
+        }
+    }
+
+    /* close the file */
+    printf("CMS: Database loaded into memory (%d records).\n", studentCount);
+    return EXIT_SUCCESS;
+}
+
+//int showAll(FILE* file) {
+//    STUDENTS student;
+//    
+//    if (!file) {
+//        perror("Failed to open file.");
+//        return EXIT_FAILURE;
+//    }
+//
+//    /* print header row */
+//    printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
+//    printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+//    printf("----------------------------------------------------------------------------------------------\n");
+//
+//    /* to reset the file pointer to the beginning before reading */
+//    rewind(file);
+//    
+//    /* read until the end of the file */
+//    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+//        /* print the student records */
+//        printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
+//    }
+//    return EXIT_SUCCESS;
+//}
+
+void showAll() {
     printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
     printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
     printf("----------------------------------------------------------------------------------------------\n");
 
-    /* to reset the file pointer to the beginning before reading */
-    rewind(file);
-    
-    /* read until the end of the file */
-    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
-        /* print the student records */
-        printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", student.ID, student.name, student.programme, student.grade);
+    for (int i = 0; i < studentCount; i++) {
+        printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
     }
-    return EXIT_SUCCESS;
 }
 
 int checkStudentID(FILE *file, int ID) {
@@ -314,9 +351,7 @@ int main() {
     const char *filename = "P12_9-CMS.txt";
     char userInputRaw[MAX_UINPUT_LENGTH + 1];
     FILE* file = NULL;
-
-    int fileOpened = 0; // flag to check if file opened
-    int idPass = 0; 
+    int fileLoaded = 0;
 
     /* opening declaration */
     printf("*                       *   **************  *                **************   **************  *                * **************\n");
@@ -362,13 +397,14 @@ int main() {
     printf("====================================================================================\n");
 
     /* loop to handle "OPEN" command */
-    while (!file) {
+    while (!fileLoaded) {
         printf("\n");
         printf("Type OPEN to open the \"StudentRecords\" data table.\n");
         printf("\n");
+        printf("%s: ", USERNAME);
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
-            printf("CMS: Wrong input bro\n");
+            printf("CMS: Error: Blank.\n");
             return 1;
         }
 
@@ -379,7 +415,7 @@ int main() {
             return 0;
         }
         
-        if (strcmp(userInputRaw, OPENFILE) == 0) {
+        /*if (strcmp(userInputRaw, OPENFILE) == 0) {
             file = openFile(filename);
             if (file) {
                 printf("CMS: The database file \"%s\" is successfully opened.\n", filename);
@@ -391,6 +427,17 @@ int main() {
         }
         else {
             printf("CMS: Unknown command: %s\n", userInputRaw);
+        }*/
+
+        /* LOAD THE DATABASE (MEMORY) */
+        if (strcmp(userInputRaw, OPENFILE) == 0) {
+            if (loadDB(filename) == EXIT_SUCCESS) {
+                fileLoaded = 1; // mark the file as loaded
+                printf("CMS: The database file \"%s\" is successfully opened.\n", filename);
+            }
+            else {
+                printf("Error: Failed to open database file. Try again.\n");
+            }
         }
     }
 
@@ -416,11 +463,17 @@ int main() {
         }
 
         /* SHOW ALL */
-        if (strcmp(userInputRaw, SHOWALL) == 0) {
+        /*if (strcmp(userInputRaw, SHOWALL) == 0) {
             if (showAll(file) == EXIT_FAILURE) {
                 printf("Error displaying database.\n");
                 continue;
             }
+            continue;
+        }*/
+
+        /* SHOW ALL (MEMORY) */
+        if (strcmp(userInputRaw, SHOWALL) == 0) {
+            showAll();
             continue;
         }
 
@@ -565,8 +618,10 @@ int main() {
             continue;
         }
 
+        /* when user input an invalid command */
         else {
             printf("Unknown command: %s\n", userInputRaw);
+            continue;
         }
         
     }
