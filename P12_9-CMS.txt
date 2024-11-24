@@ -2,10 +2,10 @@
 2201234,Isaac Teo,Computer Science,63.40
 2304567,John Levoy,Digital Supply Chain,85.90
 2401038,John Htet,Digital Pen,68.45
-2401048,Hanif Fadhil,Computer Engineering,85.50
+2401048,Hanif Fadhil,Law School,85.50
 2401050,Donovan Khoo,Public Safety and Security,88.10
-2401049,Michael Ross,Law School,99.90
-2401051,Raihan,Comp Sci,94.40
+2401051,Raihan,Computer Science,94.40
 2401052,Rifqy,Engineer,85.30
 2401053,Harvey Specter,Law,99.30
-2401055,Ben,CompSci,34.60
+2412034,Eelias,Psychology,10.20
+2401058,Aizal Dani,Sports Association,89.30

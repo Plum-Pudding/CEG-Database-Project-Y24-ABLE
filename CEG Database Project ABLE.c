@@ -277,122 +277,203 @@ int queryStudent(int ID) {
     return EXIT_SUCCESS;
 }
 
-int updateStudent(FILE* file, const char *filename, int ID, const char *field, const char *newValue) {
-    STUDENTS student;
+//int updateStudent(FILE* file, const char *filename, int ID, const char *field, const char *newValue) {
+//    STUDENTS student;
+//    int found = 0;
+//
+//    /* Open a temporary file to rewrite the data */
+//    FILE* tempFile = fopen("temp.txt", "w");
+//    if (!tempFile) {
+//        perror("Error: Failed to open temporary file");
+//        return EXIT_FAILURE;
+//    }
+//
+//    /* Start from beginning of the file */
+//    rewind(file);
+//
+//    /* Read each record and update if ID matches */
+//    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+//        if (student.ID == ID) {
+//            found = 1;
+//        
+//            // update the appropriate field
+//            if (strcmp(field, "NAME") == 0) {
+//                strncpy(student.name, newValue, sizeof(student.name) - 1);
+//            }
+//            else if (strcmp(field, "PROGRAMME") == 0) {
+//                strncpy(student.programme, newValue, sizeof(student.programme) - 1);
+//            }
+//            else if (strcmp(field, "GRADE") == 0) {
+//                student.grade = atof(newValue); // convert string to double
+//            }
+//            else {
+//                printf("Error: Invalid field '%s'. Allowed fields: Name, Programme, Grade.", field);
+//                fclose(tempFile);
+//                return EXIT_FAILURE;
+//            }
+//        }
+//        /* write the record (updated or unchanged) to the temporary file */
+//        fprintf(tempFile, "%d,%s,%s,%.2f\n", student.ID, student.name, student.programme, student.grade);
+//    }
+//
+//    fclose(file);       // close the original file 
+//    fclose(tempFile);   // close the temporary file
+//
+//    /* replace the original file with the updated file */
+//    if (found) {
+//        remove(filename);   // delete the og file
+//        rename("temp.txt", filename);   // rename the temporary file to the original name
+//        file = fopen(filename, "r");    // reopen the updated file in read mode
+//        if (!file) {
+//            perror("Error: Failed to reopen updated file.\n");
+//            return EXIT_FAILURE;
+//        }
+//    }
+//    else {
+//        printf("CMS: The record with ID=%d does not exist.\n", ID);
+//        remove("temp.txt"); // cleanup temporary file
+//        return EXIT_FAILURE;
+//    }
+//
+//    return EXIT_SUCCESS;
+//}
+
+/* UPDATE (MEMORY) */
+int updateStudentMEM(int ID, const char *field, const char *newValue) {
     int found = 0;
 
-    /* Open a temporary file to rewrite the data */
-    FILE* tempFile = fopen("temp.txt", "w");
-    if (!tempFile) {
-        perror("Error: Failed to open temporary file");
-        return EXIT_FAILURE;
-    }
-
-    /* Start from beginning of the file */
-    rewind(file);
-
-    /* Read each record and update if ID matches */
-    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
-        if (student.ID == ID) {
+    /* find the matching ID */
+    for (int i = 0; i < studentCount; i++) {
+        if (studentRecords[i].ID == ID) {
             found = 1;
-        
-            // update the appropriate field
+
+            /* Update the corresponding field */
             if (strcmp(field, "NAME") == 0) {
-                strncpy(student.name, newValue, sizeof(student.name) - 1);
+                strncpy(studentRecords[i].name, newValue, MAX_NAME_LENGTH - 1);
             }
             else if (strcmp(field, "PROGRAMME") == 0) {
-                strncpy(student.programme, newValue, sizeof(student.programme) - 1);
+                strncpy(studentRecords[i].programme, newValue, MAX_PROGRAMME_LENGTH - 1);
             }
             else if (strcmp(field, "GRADE") == 0) {
-                student.grade = atof(newValue); // convert string to double
+                double grade = atof(newValue); // convert string to double
+                if (grade < 0.0 || grade > 100.0) {
+                    printf("CMS: Error Invalid grade. Enter value between 0 - 100\n");
+                    return EXIT_FAILURE;
+                }
+                else {
+                    studentRecords[i].grade = grade;
+                }
             }
             else {
-                printf("Error: Invalid field '%s'. Allowed fields: Name, Programme, Grade.", field);
-                fclose(tempFile);
+                printf("Error: Invalid field '%s'. Allowed fields: Name, Programme, Grade.\n", field);
                 return EXIT_FAILURE;
             }
-        }
-        /* write the record (updated or unchanged) to the temporary file */
-        fprintf(tempFile, "%d,%s,%s,%.2f\n", student.ID, student.name, student.programme, student.grade);
-    }
-
-    fclose(file);       // close the original file 
-    fclose(tempFile);   // close the temporary file
-
-    /* replace the original file with the updated file */
-    if (found) {
-        remove(filename);   // delete the og file
-        rename("temp.txt", filename);   // rename the temporary file to the original name
-        file = fopen(filename, "r");    // reopen the updated file in read mode
-        if (!file) {
-            perror("Error: Failed to reopen updated file.\n");
-            return EXIT_FAILURE;
+            return EXIT_SUCCESS;
         }
     }
-    else {
-        printf("CMS: The record with ID=%d does not exist.\n", ID);
-        remove("temp.txt"); // cleanup temporary file
+    if (!found) {
+        printf("CMS: The record with ID=%d does not exists.\n", ID);
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
 
-int deleteStudent(FILE* file, const char *filename, int ID) {
-    STUDENTS student;
-    int found = 0;
+//int deleteStudent(FILE* file, const char *filename, int ID) {
+//    STUDENTS student;
+//    int found = 0;
+//
+//    /* open a temporary file to rewrite data excluding the target record */
+//    FILE* tempFile = fopen("temp.txt", "w");
+//    if (!tempFile) {
+//        printf("CMS: Failed to open temporary file.\n");
+//        return EXIT_FAILURE;
+//    }
+//
+//    /* reset the pointer to the beginning as always */
+//    rewind(file);
+//    
+//    /* read each record */
+//    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+//        if (student.ID == ID) {
+//            found = 1;
+//
+//            char choice[10];
+//            printf("Are you sure you want to delete record with ID=%d? Type \"Y\" to Confirm or type \"N\" to cancel.\n", ID);
+//            fgets(choice, sizeof(choice), stdin);
+//            choice[strcspn(choice, "\n")] = 0;  // remove newline character
+//
+//            if (strcmp(choice, "Y") == 0 || strcmp(choice, "y") == 0) {
+//                printf("CMS: The record with ID=%d is successfully deleted.\n", ID);
+//                continue;
+//            }
+//            else if (strcmp(choice, "N") == 0 || strcmp(choice, "n") == 0) {
+//                printf("CMS: The deletion is cancelled.\n");
+//            }
+//        }
+//
+//        /* write all other records to the temporary file */
+//        fprintf(tempFile, "%d,%s,%s,%.2f\n", student.ID, student.name, student.programme, student.grade);
+//    }
+//
+//    fclose(file);
+//    fclose(tempFile);
+//
+//    /* handle cases where ID not found */
+//    if (!found) {
+//        remove("temp.txt");
+//        return EXIT_FAILURE;
+//    }
+//
+//    /* replace original file with the updated file */
+//    remove(filename);
+//    if (rename("temp.txt", filename) != 0) {
+//        perror("CMS: Failed to update the file.\n");
+//        return EXIT_FAILURE;
+//    }
+//    return EXIT_SUCCESS;
+//}
 
-    /* open a temporary file to rewrite data excluding the target record */
-    FILE* tempFile = fopen("temp.txt", "w");
-    if (!tempFile) {
-        printf("CMS: Failed to open temporary file.\n");
-        return EXIT_FAILURE;
-    }
+/* Delete function to remove student from memory address */
+int deleteStudentMEM(int ID) {
+    int found = 0; // flag for finding ID
 
-    /* reset the pointer to the beginning as always */
-    rewind(file);
-    
-    /* read each record */
-    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
-        if (student.ID == ID) {
+    /* find the matching ID */
+    for (int i = 0; i < studentCount; i++) {
+        if (studentRecords[i].ID == ID) {
             found = 1;
 
             char choice[10];
-            printf("Are you sure you want to delete record with ID=%d? Type \"Y\" to Confirm or type \"N\" to cancel.\n", ID);
+            printf("CMS: Are you sure you want to delete record with ID=%d? Type \"Y\" to Confirm or type \"N\" to cancel.\n", ID);
             fgets(choice, sizeof(choice), stdin);
-            choice[strcspn(choice, "\n")] = 0;  // remove newline character
-
+            choice[strcspn(choice, "\n")] = 0;
             if (strcmp(choice, "Y") == 0 || strcmp(choice, "y") == 0) {
-                printf("CMS: The record with ID=%d is successfully deleted.\n", ID);
-                continue;
+                /* shift the remaining records */
+                for (int j = i; j < studentCount; j++) {
+                    studentRecords[j] = studentRecords[j + 1];
+                }
+
+                studentCount--; // decrement the student count
+                printf("CMS: The record with ID=%d has been deleted.\n", ID);
+                return EXIT_SUCCESS;
             }
             else if (strcmp(choice, "N") == 0 || strcmp(choice, "n") == 0) {
-                printf("CMS: The deletion is cancelled.\n");
+                printf("CMS: Deletion of the record ID=%d has been cancelled.\n", ID);
+                return EXIT_FAILURE;
+            }
+            else {
+                printf("CMS: Invalid choice, deletion cancelled.\n");
+                return EXIT_FAILURE;
             }
         }
-
-        /* write all other records to the temporary file */
-        fprintf(tempFile, "%d,%s,%s,%.2f\n", student.ID, student.name, student.programme, student.grade);
     }
-
-    fclose(file);
-    fclose(tempFile);
-
-    /* handle cases where ID not found */
     if (!found) {
-        remove("temp.txt");
-        return EXIT_FAILURE;
-    }
-
-    /* replace original file with the updated file */
-    remove(filename);
-    if (rename("temp.txt", filename) != 0) {
-        perror("CMS: Failed to update the file.\n");
+        printf("CMS: Error: The record with ID=%d does not exist.\n", ID);
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
 }
 
+/* Save function to write the values from memory to the txt file database */
 int saveDB(const char *filename) {
     FILE* file = fopen(filename, "w");
     if (!file) {
@@ -409,6 +490,7 @@ int saveDB(const char *filename) {
     return EXIT_SUCCESS;
 }
 
+/* main functions */
 int main() {
     const char *filename = "P12_9-CMS.txt";
     char userInputRaw[MAX_UINPUT_LENGTH + 1];
@@ -669,7 +751,7 @@ int main() {
             int ID;
 
             if (sscanf(userInputRaw + 9, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
-                printf("Error: ID must be 7 digits and according to SIT format.\n");
+                printf("CMS: Error: ID must be 7 digits and according to SIT format.\n");
                 continue;
             }
 
@@ -680,7 +762,37 @@ int main() {
         }
 
 
-        /* UPDATE */
+        ///* UPDATE */
+        //if (strncmp(userInputRaw, "UPDATE ID=", 10) == 0) {
+        //    int ID;
+        //    char field[50] = { 0 };
+        //    char newValue[100] = { 0 };
+
+        //    /* Extract ID */
+        //    if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+        //        printf("Error: ID must be 7 digits and according to SIT format.\n", ID);
+        //        continue;
+        //    }
+
+        //    /* Extract field to update its new value */
+        //    char* fieldStart = strchr(userInputRaw + 10, ' '); // find the space after the ID
+        //    if (!fieldStart || sscanf(fieldStart + 1, "%49[^=]=%99[^\n]", field, newValue) != 2) {
+        //        printf("Error: Invalid format. Use UPDATE ID=XXXXXXX Field=Value.\n");
+        //        continue;
+        //    }
+
+        //    /* Update the record */
+        //    if (updateStudent(file, filename, ID, field, newValue) == EXIT_FAILURE) {
+        //        printf("CMS: Failed to update the record for ID=%d.\n", ID);
+        //    }
+        //    else {
+        //        printf("CMS: The record with ID=%d is successfully updated.\n", ID);
+        //    }
+        //    continue;
+        //}
+
+
+        /* UPDATE (MEMORY) */
         if (strncmp(userInputRaw, "UPDATE ID=", 10) == 0) {
             int ID;
             char field[50] = { 0 };
@@ -688,20 +800,20 @@ int main() {
 
             /* Extract ID */
             if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
-                printf("Error: ID must be 7 digits and according to SIT format.\n", ID);
+                printf("CMS: Error: ID must be 7 digits and according to SIT format.\n");
                 continue;
             }
 
-            /* Extract field to update its new value */
+            /* Extract field to update value */
             char* fieldStart = strchr(userInputRaw + 10, ' '); // find the space after the ID
-            if (!fieldStart || sscanf(fieldStart + 1, "%49[^=]=%99[^\n]", field, newValue) != 2) {
-                printf("Error: Invalid format. Use UPDATE ID=XXXXXXX Field=Value.\n");
+            if (!fieldStart || sscanf(fieldStart + 1, "%49[^=]=%99[^\n]", field, newValue) != 2) {  // detects field as NAME= / PROGRAMME= / GRADE=  and newValue as what comes after "=" until "\n" newline
+                printf("CMS: Error: Invalid format. Use UPDATE ID=XXXXXXX Field=Value.\n");
                 continue;
             }
 
-            /* Update the record */
-            if (updateStudent(file, filename, ID, field, newValue) == EXIT_FAILURE) {
-                printf("CMS: Failed to update the record for ID=%d.\n", ID);
+            /* call the updateStudent() function */
+            if (updateStudentMEM(ID, field, newValue) == EXIT_FAILURE) {
+                printf("CMS: Failed to update student record.\n");
             }
             else {
                 printf("CMS: The record with ID=%d is successfully updated.\n", ID);
@@ -710,32 +822,47 @@ int main() {
         }
 
 
-        /* DELETE */
+        ///* DELETE */
+        //if (strncmp(userInputRaw, "DELETE ID=", 10) == 0) {
+        //    int ID;
+
+        //    if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999 ){
+        //        printf("Error: ID must be 7 digits and according to SIT format.\n");
+        //        continue;
+        //    }
+
+        //    /* extract ID */
+        //    if (deleteStudent(file, filename, ID) == EXIT_FAILURE) {
+        //        printf("CMS: The record with ID=%d does not exist.\n", ID);
+
+        //        // reopen the file in read mode to ensure subsequent commands work
+        //        file = fopen(filename, "r");
+        //        if (!file) {
+        //            perror("CMS: Failed to reopen the updated file.\n");
+        //            return EXIT_FAILURE;
+        //        }
+        //    }
+        //    else {
+        //        file = fopen(filename, "r");
+        //        if (!file) {
+        //            perror("CMS: Failed to reopen the updated file.\n");
+        //            return EXIT_FAILURE;
+        //        }
+        //    }
+        //    continue;
+        //}
+
+        /* DELETE (MEMORY) */
         if (strncmp(userInputRaw, "DELETE ID=", 10) == 0) {
             int ID;
 
-            if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999 ){
-                printf("Error: ID must be 7 digits and according to SIT format.\n", ID);
+            if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
+                printf("Error: ID must be 7 digits and according to SIT format.\n");
                 continue;
             }
 
-            /* extract ID */
-            if (deleteStudent(file, filename, ID) == EXIT_FAILURE) {
-                printf("CMS: The record with ID=%d does not exist.\n", ID);
-
-                // reopen the file in read mode to ensure subsequent commands work
-                file = fopen(filename, "r");
-                if (!file) {
-                    perror("CMS: Failed to reopen the updated file.\n");
-                    return EXIT_FAILURE;
-                }
-            }
-            else {
-                file = fopen(filename, "r");
-                if (!file) {
-                    perror("CMS: Failed to reopen the updated file.\n");
-                    return EXIT_FAILURE;
-                }
+            if (deleteStudentMEM(ID) == EXIT_FAILURE) {
+                continue;
             }
             continue;
         }
@@ -746,13 +873,16 @@ int main() {
                 printf("CMS: Saving data to \"%s\"...\n", filename);
                 if (saveDB(filename) == EXIT_FAILURE) {
                     printf("CMS: Failed to save the database.\n");
+                    continue;
                 }
                 else {
                     printf("CMS: Database saved successfully.\n");
+                    continue;
                 }
             }
             else {
                 printf("CMS: No database is currently open to save.\n");
+                continue;
             }
         }
 
