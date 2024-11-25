@@ -119,7 +119,8 @@ int loadDB(const char* filename) {
         }
     }
 
-    /* close the file */
+    /* close the file  */
+    fclose(file);
     printf("CMS: Database loaded into memory (%d records).\n", studentCount);
     return EXIT_SUCCESS;
 }
@@ -160,19 +161,19 @@ void showAll() {
     }
 }
 
-int checkStudentID(FILE *file, int ID) {
-    STUDENTS student;
-
-    /* rewind the pointer to the beginning of the data */
-    rewind(file);
-    while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
-        if (student.ID == ID) {
-            printf("CMS: The record with ID=%d already exists.", ID);
-            return EXIT_FAILURE;
-        }
-    }
-    return EXIT_SUCCESS;
-}
+//int checkStudentID(FILE *file, int ID) {
+//    STUDENTS student;
+//
+//    /* rewind the pointer to the beginning of the data */
+//    rewind(file);
+//    while (fscanf(file, "%d, %49[^,], %99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+//        if (student.ID == ID) {
+//            printf("CMS: The record with ID=%d already exists.", ID);
+//            return EXIT_FAILURE;
+//        }
+//    }
+//    return EXIT_SUCCESS;
+//}
 
 /* Check ID (MEMORY) */
 int checkStudentIDMEM(int ID) {
@@ -185,36 +186,36 @@ int checkStudentIDMEM(int ID) {
     return EXIT_SUCCESS;
 }
 
-int insertStudent(FILE* file, const char *filename, int ID, const char *name, const char *programme, double grade) {
-    STUDENTS student;
-
-    /* rewind the pointer to check for duplicates */
-    rewind(file);
-
-    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
-        if (student.ID == ID) {
-            printf("CMS: The record with ID=%d already exists.", ID);
-            return EXIT_FAILURE;
-        }
-    }
-
-    /* close the file for reading and reopen in append mode */ 
-    fclose(file);
-    file = fopen(filename, "a");
-    if (!file) {
-        perror("CMS: Failed to open file for appending");
-        return EXIT_FAILURE;
-    }
-
-    /* append the new student record to the file */
-    fprintf(file, "%d,%s,%s,%.2f\n", ID, name, programme, grade);
-    printf("CMS: A new record with ID=%d is successfully inserted.\n", ID);
-
-    /* close after appending */
-    fclose(file);
-
-    return EXIT_SUCCESS;
-}
+//int insertStudent(FILE* file, const char *filename, int ID, const char *name, const char *programme, double grade) {
+//    STUDENTS student;
+//
+//    /* rewind the pointer to check for duplicates */
+//    rewind(file);
+//
+//    while (fscanf(file, "%d,%49[^,],%99[^,],%lf", &student.ID, student.name, student.programme, &student.grade) == 4) {
+//        if (student.ID == ID) {
+//            printf("CMS: The record with ID=%d already exists.", ID);
+//            return EXIT_FAILURE;
+//        }
+//    }
+//
+//    /* close the file for reading and reopen in append mode */ 
+//    fclose(file);
+//    file = fopen(filename, "a");
+//    if (!file) {
+//        perror("CMS: Failed to open file for appending");
+//        return EXIT_FAILURE;
+//    }
+//
+//    /* append the new student record to the file */
+//    fprintf(file, "%d,%s,%s,%.2f\n", ID, name, programme, grade);
+//    printf("CMS: A new record with ID=%d is successfully inserted.\n", ID);
+//
+//    /* close after appending */
+//    fclose(file);
+//
+//    return EXIT_SUCCESS;
+//}
 
 int insertStudentMEM(int ID, const char* name, const char* programme, double grade) {
     if (studentCount > MAX_STUDENTS) {
@@ -893,10 +894,6 @@ int main() {
             continue;
         }
         
-    }
-
-    if (file) {
-        fclose(file);
     }
 
     return 0;
