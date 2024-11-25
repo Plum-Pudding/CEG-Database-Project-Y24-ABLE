@@ -487,6 +487,7 @@ int saveDB(const char *filename) {
         fprintf(file, "%d,%s,%s,%.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
     }
 
+    /* close the file after writing data into the database file */
     fclose(file);
     printf("CMS: Database saved to file (%d records).\n", studentCount);
     return EXIT_SUCCESS;
