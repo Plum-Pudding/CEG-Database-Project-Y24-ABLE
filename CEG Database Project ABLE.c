@@ -153,11 +153,11 @@ int loadDB(const char* filename) {
 void showAll() {
     printf("CMS: Here are all the records found in the table \"StudentRecords\"\n");
     printf("----------------------------------------------------------------------------------------------\n");
-    printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+    printf("%-10s\t%-30s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
     printf("----------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < studentCount; i++) {
-        printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
+        printf("%-10d\t%-30s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
     }
 }
 
@@ -690,6 +690,8 @@ int main() {
             char name[MAX_NAME_LENGTH];
             char programme[MAX_PROGRAMME_LENGTH];
             double grade;
+            int MAXNAMELEN = 24;
+            int NAMELEN = 0;
             
             if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
                 printf("Error: ID must be 7 digits and according to SIT format.\n");
