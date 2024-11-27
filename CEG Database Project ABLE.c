@@ -140,7 +140,7 @@ void showAll() {
 
 
 /* Check ID (MEMORY) */
-int checkStudentIDMEM(int ID) {
+int checkStudentID(int ID) {
     for (int i = 0; i < studentCount; i++) {
         if (studentRecords[i].ID == ID) {
             printf("CMS: The record with ID=%d already exists.", ID);
@@ -151,7 +151,7 @@ int checkStudentIDMEM(int ID) {
 }
 
 
-int insertStudentMEM(int ID, const char* name, const char* programme, double grade) {
+int insertStudent(int ID, const char* name, const char* programme, double grade) {
     if (studentCount > MAX_STUDENTS) {
         printf("CMS: Cannot add more students. Maximum capacity reached.\n");
         return EXIT_FAILURE;
@@ -193,7 +193,7 @@ int queryStudent(int ID) {
 
 
 /* UPDATE (MEMORY) */
-int updateStudentMEM(int ID, const char *field, const char *newValue) {
+int updateStudent(int ID, const char *field, const char *newValue) {
     int found = 0;
 
     /* find the matching ID */
@@ -219,7 +219,7 @@ int updateStudentMEM(int ID, const char *field, const char *newValue) {
                 }
             }
             else {
-                printf("Error: Invalid field '%s'. Allowed fields: Name, Programme, Grade.\n", field);
+                printf("Error: Invalid field '%s'. Allowed fields: Name, Programme, Mark.\n", field);
                 return EXIT_FAILURE;
             }
             return EXIT_SUCCESS;
@@ -235,7 +235,7 @@ int updateStudentMEM(int ID, const char *field, const char *newValue) {
 
 
 /* Delete function to remove student from memory address */
-int deleteStudentMEM(int ID) {
+int deleteStudent(int ID) {
     int found = 0; // flag for finding ID
 
     /* find the matching ID */
@@ -416,7 +416,7 @@ int main() {
                 continue;
             }
 
-            if (checkStudentIDMEM(ID) == EXIT_FAILURE) {
+            if (checkStudentID(ID) == EXIT_FAILURE) {
                 continue;
             }
 
@@ -436,7 +436,7 @@ int main() {
             }
             programme[strcspn(programme, "\n")] = 0;
 
-            /* GRADE */
+            /* Mark */
             printf("Grade=");
             if (scanf("%lf", &grade) != 1 || grade < 0.0 || grade > 100.0) {
                 printf("Error: Invalid grade. Please enter a value between 0 - 100.\n");
@@ -446,7 +446,7 @@ int main() {
             while (getchar() != '\n'); // clear leftover newline
 
             /* call insertStudent() to insert into memory */
-            if (insertStudentMEM(ID, name, programme, grade) == EXIT_FAILURE) {
+            if (insertStudent(ID, name, programme, grade) == EXIT_FAILURE) {
                 printf("CMS: Failed to insert the student.\n");
             }
             continue;
@@ -489,7 +489,7 @@ int main() {
             }
 
             /* call the updateStudent() function */
-            if (updateStudentMEM(ID, field, newValue) == EXIT_FAILURE) {
+            if (updateStudent(ID, field, newValue) == EXIT_FAILURE) {
                 printf("CMS: Failed to update student record.\n");
             }
             else {
@@ -508,7 +508,7 @@ int main() {
                 continue;
             }
 
-            if (deleteStudentMEM(ID) == EXIT_FAILURE) {
+            if (deleteStudent(ID) == EXIT_FAILURE) {
                 continue;
             }
             continue;
