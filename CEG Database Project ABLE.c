@@ -343,16 +343,17 @@ int main() {
         printf("\n");
         printf("%s: ", USERNAME);
 
+
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
             printf("CMS: Error: Blank.\n");
-            return 1;
+            continue;
         }
 
         userInputRaw[strcspn(userInputRaw, "\n")] = 0;
 
         if (strcmp(userInputRaw, END_MY_SUFFERING) == 0) {
             printf("goodbye!\n");
-            return 0;
+            return EXIT_SUCCESS;
         }
 
         /* LOAD THE DATABASE (MEMORY) */
@@ -364,6 +365,11 @@ int main() {
             else {
                 printf("Error: Failed to open database file. Try again.\n");
             }
+        }
+
+        else {
+            printf("CMS: Error: Blank.\n");
+            continue;
         }
     }
 
