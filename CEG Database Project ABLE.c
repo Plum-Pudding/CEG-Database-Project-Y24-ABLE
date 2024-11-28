@@ -9,17 +9,12 @@
 #define MAX_NAME_LENGTH 255
 #define MAX_PROGRAMME_LENGTH 255
 #define MAX_STUDENTS 100
-#define SANITY -999
-#define CIGARETTES 500
 #define ID_LEN 7
 
 #define USERNAME "P12_9"
 
 #define OPENFILE "OPEN"
 #define SHOWALL "SHOW ALL"
-#define INSERT "INSERT"
-#define QUERY "QUERY ID"
-#define UPDATE "UPDATE"
 #define DELETE "DELETE"
 #define SAVE "SAVE"
 #define END_MY_SUFFERING "EXIT" 
@@ -42,7 +37,6 @@ typedef struct student_struct {
     char name[MAX_NAME_LENGTH];
     char programme[MAX_PROGRAMME_LENGTH];
     double grade;
-    //struct studentItem *next;
 } STUDENTS;
 
 STUDENTS studentRecords[MAX_STUDENTS];
