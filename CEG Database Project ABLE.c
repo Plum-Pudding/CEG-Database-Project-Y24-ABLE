@@ -459,9 +459,13 @@ int main() {
             char programme[MAX_PROGRAMME_LENGTH];
             double grade;
 
-            
+            //probably should have put this in the interpretCommand() func tbh but it's a bit late now ¯\_(._.)_/¯
+            char* startPositionID;
+            char* startPositionName;
+            char* startPositionProgramme;
+            char* startPositionGrade;
 
-            //TODO: One line command-- We're going to use '=' as markers to decipher the garbage that the user gives us
+            //TODO: One line command-- Using strstr()
             //Test Examples:
             //INSERT ID=2400282 Name=John Smith Programme=Computer Science Mark=89.2
             //INSERT ID=2400283 Name=Jane G. Smith Programme=Economics Mark=76.4
