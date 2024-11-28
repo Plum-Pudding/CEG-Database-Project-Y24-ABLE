@@ -376,7 +376,7 @@ int main() {
         printf("%s: ", USERNAME);
 
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
-            printf("CMS: Invalid command try again.\n");
+            printf("CMS: Invalid command, try again.\n");
             continue;
         }
 
@@ -442,6 +442,29 @@ int main() {
             /* call insertStudent() to insert into memory */
             if (insertStudent(ID, name, programme, grade) == EXIT_FAILURE) {
                 printf("CMS: Failed to insert the student.\n");
+            }
+            continue;
+        }
+
+        /* INSERT (MEMORY) V2 LOLOLOL*/
+        if (strncmp(userInputRaw, "INSERT ID=", 10) == 0) {
+            int ID;
+            char name[MAX_NAME_LENGTH];
+            char programme[MAX_PROGRAMME_LENGTH];
+            double grade;
+
+            
+
+            //TODO: One line command-- We're going to use '=' as markers to decipher the garbage that the user gives us
+            //Test Examples:
+            //INSERT ID=2400282 Name=John Smith Programme=Computer Science Mark=89.2
+            //INSERT ID=2400283 Name=Jane G. Smith Programme=Economics Mark=76.4
+            //INSERT ID=2400284 Name=Johnson Johnson Programme=Business and Marketing Mark=1.1
+
+
+
+            if (checkStudentIDMEM(ID) == EXIT_FAILURE) {
+                continue;
             }
             continue;
         }
