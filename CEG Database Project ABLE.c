@@ -203,6 +203,9 @@ int updateStudent(int ID, const char *field, const char *newValue) {
                 strncpy(studentRecords[i].programme, newValue, MAX_PROGRAMME_LENGTH - 1);
             }
             else if (strcmp(field, "GRADE") == 0) {
+
+
+
                 double grade = atof(newValue); // convert string to double
                 if (grade < 0.0 || grade > 100.0) {
                     printf("CMS: Error Invalid grade. Enter value between 0 - 100\n");
@@ -290,10 +293,12 @@ int confirmExit() {
     char choice;
 
     printf("Are you sure you want to exit? (y/n): ");
-    if (scanf(" %c", &choice) != 1) {  // Capture the user's response
+    if (scanf(" %c", &choice) != 1 || choice == NULL) {  // Capture the user's response
+        while (getchar() != '\n');
         printf("Invalid input. Returning to the program...\n");
         return 0; // Do not exit
     }
+    while (getchar() != '\n');
 
     if (choice == 'y' || choice == 'Y') {
         return 1; // Confirm exit
@@ -416,9 +421,9 @@ int main() {
                 printf("Goodbye!\n");
                 break; // Exit the loop if user confirms
             }
-            /*else {
+            else {
                 continue;
-            }*/
+            }
         }
 
 
