@@ -9,17 +9,12 @@
 #define MAX_NAME_LENGTH 255
 #define MAX_PROGRAMME_LENGTH 255
 #define MAX_STUDENTS 100
-#define SANITY -999
-#define CIGARETTES 500
 #define ID_LEN 7
 
 #define USERNAME "P12_9"
 
 #define OPENFILE "OPEN"
 #define SHOWALL "SHOW ALL"
-#define INSERT "INSERT"
-#define QUERY "QUERY ID"
-#define UPDATE "UPDATE"
 #define DELETE "DELETE"
 #define SAVE "SAVE"
 #define END_MY_SUFFERING "EXIT" 
@@ -42,53 +37,52 @@ typedef struct student_struct {
     char name[MAX_NAME_LENGTH];
     char programme[MAX_PROGRAMME_LENGTH];
     double grade;
-    //struct studentItem *next;
 } STUDENTS;
 
 STUDENTS studentRecords[MAX_STUDENTS];
 int studentCount = 0;
 
 
-int interpretCommand(char* rawUserInput, int inputLength) {
-    int commandIndex = -1;                          //default value (if no valid command found in user input, return -1)
-    char trimmedUserInput[MAX_UINPUT_LENGTH];       //
-
-    //TODO: cut out the chars before the first encountered whitespace ' '
-    for (int i = 0; i < MAX_UINPUT_LENGTH; i++) {
-        if (rawUserInput[i] == ' ') {
-            //whitespace found-- stop the loop
-            break;
-        }
-        else {
-            trimmedUserInput[i] = rawUserInput[i];
-        }
-    }
-
-    //Yes I know-- this is catastrophically bad lol
-    if (/*OPEN*/ 1) {
-        commandIndex = 1;
-    }
-    else if (/*INSERT*/ 1) {
-        commandIndex = 2;
-    }
-    else if (/*QUERY*/ 1) {
-        commandIndex = 3;
-    }
-    else if (/*UPDATE*/ 1) {
-        commandIndex = 4;
-    }
-    else if (/*DELETE*/ 1) {
-        commandIndex = 5;
-    }
-    else if (/*SAVE*/ 1) {
-        commandIndex = 6;
-    }
-    else if (/*SHOW ALL*/ 1) {
-        commandIndex = 7;
-    }
-
-    return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
-}
+//int interpretCommand(char* rawUserInput, int inputLength) {
+//    int commandIndex = -1;                          //default value (if no valid command found in user input, return -1)
+//    char trimmedUserInput[MAX_UINPUT_LENGTH];       //
+//
+//    //TODO: cut out the chars before the first encountered whitespace ' '
+//    for (int i = 0; i < MAX_UINPUT_LENGTH; i++) {
+//        if (rawUserInput[i] == ' ') {
+//            //whitespace found-- stop the loop
+//            break;
+//        }
+//        else {
+//            trimmedUserInput[i] = rawUserInput[i];
+//        }
+//    }
+//
+//    //Yes I know-- this is catastrophically bad lol
+//    if (/*OPEN*/ 1) {
+//        commandIndex = 1;
+//    }
+//    else if (/*INSERT*/ 1) {
+//        commandIndex = 2;
+//    }
+//    else if (/*QUERY*/ 1) {
+//        commandIndex = 3;
+//    }
+//    else if (/*UPDATE*/ 1) {
+//        commandIndex = 4;
+//    }
+//    else if (/*DELETE*/ 1) {
+//        commandIndex = 5;
+//    }
+//    else if (/*SAVE*/ 1) {
+//        commandIndex = 6;
+//    }
+//    else if (/*SHOW ALL*/ 1) {
+//        commandIndex = 7;
+//    }
+//
+//    return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
+//}
 
 
 FILE* openFile(const char *filename) {
@@ -177,9 +171,9 @@ int queryStudent(int ID) {
     for (int i = 0; i < studentCount; i++) {
         if (studentRecords[i].ID == ID) {
             printf("CMS: The record with ID=%d is found in the data table.\n", ID);
-            printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+            printf("%-10s\t%-30s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
             printf("----------------------------------------------------------------------------------------------\n");
-            printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
+            printf("%-10d\t%-30s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
             found = 1;
             break;
         }
@@ -349,16 +343,17 @@ int main() {
         printf("\n");
         printf("%s: ", USERNAME);
 
+
         if (fgets(userInputRaw, sizeof(userInputRaw), stdin) == NULL) {
             printf("CMS: Error: Blank.\n");
-            return 1;
+            continue;
         }
 
         userInputRaw[strcspn(userInputRaw, "\n")] = 0;
 
         if (strcmp(userInputRaw, END_MY_SUFFERING) == 0) {
             printf("goodbye!\n");
-            return 0;
+            return EXIT_SUCCESS;
         }
 
         /* LOAD THE DATABASE (MEMORY) */
@@ -370,6 +365,11 @@ int main() {
             else {
                 printf("Error: Failed to open database file. Try again.\n");
             }
+        }
+
+        else {
+            printf("CMS: Error, Unknown command: %s\n",userInputRaw);
+            continue;
         }
     }
 
@@ -453,31 +453,27 @@ int main() {
         }
 
         /* INSERT (MEMORY) V2 LOLOLOL*/
-        if (strncmp(userInputRaw, "INSERT ID=", 10) == 0) {
-            int ID;
-            char name[MAX_NAME_LENGTH];
-            char programme[MAX_PROGRAMME_LENGTH];
-            double grade;
+        //if (strncmp(userInputRaw, "INSERT ID=", 10) == 0) {
+        //    int ID;
+        //    char name[MAX_NAME_LENGTH];
+        //    char programme[MAX_PROGRAMME_LENGTH];
+        //    double grade;
 
-            //probably should have put this in the interpretCommand() func tbh but it's a bit late now ¯\_(._.)_/¯
-            char* startPositionID;
-            char* startPositionName;
-            char* startPositionProgramme;
-            char* startPositionGrade;
+        //    
 
-            //TODO: One line command-- Using strstr()
-            //Test Examples:
-            //INSERT ID=2400282 Name=John Smith Programme=Computer Science Mark=89.2
-            //INSERT ID=2400283 Name=Jane G. Smith Programme=Economics Mark=76.4
-            //INSERT ID=2400284 Name=Johnson Johnson Programme=Business and Marketing Mark=1.1
+        //    //TODO: One line command-- We're going to use '=' as markers to decipher the garbage that the user gives us
+        //    //Test Examples:
+        //    //INSERT ID=2400282 Name=John Smith Programme=Computer Science Mark=89.2
+        //    //INSERT ID=2400283 Name=Jane G. Smith Programme=Economics Mark=76.4
+        //    //INSERT ID=2400284 Name=Johnson Johnson Programme=Business and Marketing Mark=1.1
 
 
 
-            if (checkStudentIDMEM(ID) == EXIT_FAILURE) {
-                continue;
-            }
-            continue;
-        }
+        //    if (checkStudentID(ID) == EXIT_FAILURE) {
+        //        continue;
+        //    }
+        //    continue;
+        //}
 
 
         /* QUERY (MEMORY) */
