@@ -416,6 +416,9 @@ int main() {
                 printf("Goodbye!\n");
                 break; // Exit the loop if user confirms
             }
+            /*else {
+                continue;
+            }*/
         }
 
 
@@ -431,9 +434,9 @@ int main() {
             int ID;
             char name[MAX_NAME_LENGTH];
             char programme[MAX_PROGRAMME_LENGTH];
-            double grade;
             int MAXNAMELEN = 24;
             int NAMELEN = 0;
+            char inputBuffer[50];
             
             if (sscanf(userInputRaw + 10, "%d", &ID) != 1 || ID < 2000000 || ID > 2999999) {
                 printf("Error: ID must be 7 digits and according to SIT format.\n");
@@ -462,12 +465,33 @@ int main() {
 
             /* Mark */
             printf("Grade=");
-            if (scanf("%lf", &grade) != 1 || grade < 0.0 || grade > 100.0) {
-                printf("Error: Invalid grade. Please enter a value between 0 - 100.\n");
-                while (getchar() != '\n');
+            if (fgets(inputBuffer, sizeof(inputBuffer), stdin) == NULL || inputBuffer[0] == '\n') {
+                printf("CMS: Error, Grade blank!\n");
                 continue;
             }
-            while (getchar() != '\n'); // clear leftover newline
+
+            inputBuffer[strcspn(inputBuffer, "\n")] = 0;
+
+            // checks if the input is valid
+            int isValid = 1;
+            for (int i = 0; inputBuffer[i] != '\0'; i++) {
+                if (!isdigit(inputBuffer[i]) && inputBuffer[i] != '.' && inputBuffer[i] != '-') {
+                    isValid = 0;
+                    break;
+                }
+            }
+
+            if (!isValid) {
+                printf("CMS: Invalid grade. Enter a numerical value for grade");
+            }
+            
+            /* Converts input to a double value */
+            double grade = atof(inputBuffer);
+
+            if (grade < 0.0 || grade > 100.0) {
+                printf("Error: Invalid grade. Please enter a value between 0 - 100.\n");
+                continue;
+            }
 
             /* call insertStudent() to insert into memory */
             if (insertStudent(ID, name, programme, grade) == EXIT_FAILURE) {
