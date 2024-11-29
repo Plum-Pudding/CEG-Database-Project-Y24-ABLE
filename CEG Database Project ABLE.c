@@ -203,9 +203,6 @@ int updateStudent(int ID, const char *field, const char *newValue) {
                 strncpy(studentRecords[i].programme, newValue, MAX_PROGRAMME_LENGTH - 1);
             }
             else if (strcmp(field, "GRADE") == 0) {
-
-
-
                 double grade = atof(newValue); // convert string to double
                 if (grade < 0.0 || grade > 100.0) {
                     printf("CMS: Error Invalid grade. Enter value between 0 - 100\n");
