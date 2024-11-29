@@ -171,9 +171,9 @@ int queryStudent(int ID) {
     for (int i = 0; i < studentCount; i++) {
         if (studentRecords[i].ID == ID) {
             printf("CMS: The record with ID=%d is found in the data table.\n", ID);
-            printf("%-10s\t%-20s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
+            printf("%-10s\t%-30s\t%-30s\t%-10s\n", "ID", "Name", "Programme", "Grade");
             printf("----------------------------------------------------------------------------------------------\n");
-            printf("%-10d\t%-20s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
+            printf("%-10d\t%-30s\t%-30s\t%-10.2f\n", studentRecords[i].ID, studentRecords[i].name, studentRecords[i].programme, studentRecords[i].grade);
             found = 1;
             break;
         }
@@ -368,7 +368,7 @@ int main() {
         }
 
         else {
-            printf("CMS: Error: Blank.\n");
+            printf("CMS: Error, Unknown command: %s\n",userInputRaw);
             continue;
         }
     }

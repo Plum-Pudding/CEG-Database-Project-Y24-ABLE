@@ -5,3 +5,5 @@
 2401050,Donovan Khoo,Public Safety and Security,88.10
 2401051,Raihan,Computer Science,94.40
 2401053,Harvey Specter,Law School,99.30
+2501059,Mike Ross,Law School,100.00
+2501058,DAS,DSA,20.00
