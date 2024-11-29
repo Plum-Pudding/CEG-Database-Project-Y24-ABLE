@@ -286,6 +286,28 @@ int saveDB(const char *filename) {
     return EXIT_SUCCESS;
 }
 
+int confirmExit() {
+    char choice;
+
+    printf("Are you sure you want to exit? (y/n): ");
+    if (scanf(" %c", &choice) != 1) {  // Capture the user's response
+        printf("Invalid input. Returning to the program...\n");
+        return 0; // Do not exit
+    }
+
+    if (choice == 'y' || choice == 'Y') {
+        return 1; // Confirm exit
+    }
+    else if (choice == 'n' || choice == 'N') {
+        printf("Returning to the program...\n");
+        return 0; // Do not exit
+    }
+    else {
+        printf("Invalid input. Returning to the program...\n");
+        return 0; // Do not exit
+    }
+}
+
 /* main functions */
 int main() {
     const char *filename = "P12_9-CMS.txt";
@@ -390,8 +412,10 @@ int main() {
 
         /* EXIT */
         if (strcmp(userInputRaw, END_MY_SUFFERING) == 0) {
-            printf("goodbye!\n");
-            break;
+            if (confirmExit()) {  // Call the confirmExit function
+                printf("Goodbye!\n");
+                break; // Exit the loop if user confirms
+            }
         }
 
 
