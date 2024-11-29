@@ -483,6 +483,7 @@ int main() {
 
             if (!isValid) {
                 printf("CMS: Invalid grade. Enter a numerical value for grade");
+                continue;
             }
             
             /* Converts input to a double value */
