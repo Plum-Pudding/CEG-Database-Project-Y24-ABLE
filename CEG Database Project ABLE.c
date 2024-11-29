@@ -43,46 +43,46 @@ STUDENTS studentRecords[MAX_STUDENTS];
 int studentCount = 0;
 
 
-int interpretCommand(char* rawUserInput, int inputLength) {
-    int commandIndex = -1;                          //default value (if no valid command found in user input, return -1)
-    char trimmedUserInput[MAX_UINPUT_LENGTH];       //
-
-    //TODO: cut out the chars before the first encountered whitespace ' '
-    for (int i = 0; i < MAX_UINPUT_LENGTH; i++) {
-        if (rawUserInput[i] == ' ') {
-            //whitespace found-- stop the loop
-            break;
-        }
-        else {
-            trimmedUserInput[i] = rawUserInput[i];
-        }
-    }
-
-    //Yes I know-- this is catastrophically bad lol
-    if (/*OPEN*/ 1) {
-        commandIndex = 1;
-    }
-    else if (/*INSERT*/ 1) {
-        commandIndex = 2;
-    }
-    else if (/*QUERY*/ 1) {
-        commandIndex = 3;
-    }
-    else if (/*UPDATE*/ 1) {
-        commandIndex = 4;
-    }
-    else if (/*DELETE*/ 1) {
-        commandIndex = 5;
-    }
-    else if (/*SAVE*/ 1) {
-        commandIndex = 6;
-    }
-    else if (/*SHOW ALL*/ 1) {
-        commandIndex = 7;
-    }
-
-    return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
-}
+//int interpretCommand(char* rawUserInput, int inputLength) {
+//    int commandIndex = -1;                          //default value (if no valid command found in user input, return -1)
+//    char trimmedUserInput[MAX_UINPUT_LENGTH];       //
+//
+//    //TODO: cut out the chars before the first encountered whitespace ' '
+//    for (int i = 0; i < MAX_UINPUT_LENGTH; i++) {
+//        if (rawUserInput[i] == ' ') {
+//            //whitespace found-- stop the loop
+//            break;
+//        }
+//        else {
+//            trimmedUserInput[i] = rawUserInput[i];
+//        }
+//    }
+//
+//    //Yes I know-- this is catastrophically bad lol
+//    if (/*OPEN*/ 1) {
+//        commandIndex = 1;
+//    }
+//    else if (/*INSERT*/ 1) {
+//        commandIndex = 2;
+//    }
+//    else if (/*QUERY*/ 1) {
+//        commandIndex = 3;
+//    }
+//    else if (/*UPDATE*/ 1) {
+//        commandIndex = 4;
+//    }
+//    else if (/*DELETE*/ 1) {
+//        commandIndex = 5;
+//    }
+//    else if (/*SAVE*/ 1) {
+//        commandIndex = 6;
+//    }
+//    else if (/*SHOW ALL*/ 1) {
+//        commandIndex = 7;
+//    }
+//
+//    return commandIndex; //TODO: check if we should just return() in the if else chain-- I don't think it matters
+//}
 
 
 FILE* openFile(const char *filename) {
